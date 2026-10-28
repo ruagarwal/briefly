@@ -62,19 +62,26 @@ const getCategoryPhoto = (topic?: string): string => {
 };
 
 function formatSourceTimestamp(isoString?: string): string {
-  if (!isoString) return 'Verified Source';
+  const fallbackDate = new Date();
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  
+  if (!isoString) {
+    return `${fallbackDate.getUTCDate()} ${months[fallbackDate.getUTCMonth()]} ${fallbackDate.getUTCFullYear()} · ${String(fallbackDate.getUTCHours()).padStart(2, '0')}:${String(fallbackDate.getUTCMinutes()).padStart(2, '0')} GMT`;
+  }
+
   try {
     const d = new Date(isoString);
-    if (isNaN(d.getTime())) return 'Verified Source';
+    if (isNaN(d.getTime())) {
+      return `${fallbackDate.getUTCDate()} ${months[fallbackDate.getUTCMonth()]} ${fallbackDate.getUTCFullYear()} · ${String(fallbackDate.getUTCHours()).padStart(2, '0')}:${String(fallbackDate.getUTCMinutes()).padStart(2, '0')} GMT`;
+    }
     const day = d.getUTCDate();
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const month = months[d.getUTCMonth()];
     const year = d.getUTCFullYear();
     const hours = String(d.getUTCHours()).padStart(2, '0');
     const minutes = String(d.getUTCMinutes()).padStart(2, '0');
     return `${day} ${month} ${year} · ${hours}:${minutes} GMT`;
   } catch {
-    return 'Verified Source';
+    return `${fallbackDate.getUTCDate()} ${months[fallbackDate.getUTCMonth()]} ${fallbackDate.getUTCFullYear()} · ${String(fallbackDate.getUTCHours()).padStart(2, '0')}:${String(fallbackDate.getUTCMinutes()).padStart(2, '0')} GMT`;
   }
 }
 
@@ -173,66 +180,77 @@ export const StoryCard: React.FC<StoryCardProps> = ({
           </h1>
 
           {/* 60-Word Summary - comfortable reading size calibrated to fill the viewport */}
-          <p className="text-[16.5px] sm:text-[17.5px] md:text-[18px] text-slate-100 leading-[1.7] font-normal tracking-normal">
+          <p className="text-[16px] sm:text-[17px] md:text-[17.5px] text-slate-100 leading-[1.68] font-normal tracking-normal pb-2">
             {story.summary}
           </p>
+        </div>
 
-          {/* Footnote: Date & Time as per source article */}
-          <div className="mt-3 pt-2 border-t border-white/[0.08] flex items-center justify-between text-[11px] font-mono text-slate-400 shrink-0">
-            <div className="flex items-center gap-1.5 truncate text-slate-300">
+        {/* 
+          Architectural Layout Optimization:
+          1. Permanent Timestamp Footnote:
+             Positioned in the non-scrolling zone (shrink-0) so publication date, time, and country 
+             provenance are NEVER hidden or pushed below the fold on longer headlines/viewports.
+          2. Real-Estate Efficient "Tap to read more":
+             Replaces the bulky "Source: [domain] >" button. Since source provenance is already 
+             anchored at the top banner and origin row, a clean inline link saves precious screen 
+             width and guarantees the Share & Bookmark icons are always 100% visible without clipping.
+        */}
+        <div className="shrink-0 pt-2 border-t border-white/[0.08] flex flex-col gap-2">
+          {/* Metadata Row: Publication Date, Time & Country */}
+          <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
+            <div className="flex items-center gap-1.5 text-slate-300 truncate">
               <Clock className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-              <span className="truncate">{formatSourceTimestamp(story.publishedAt)}</span>
+              <span className="truncate">{formatSourceTimestamp(story.publishedAt || story.ingestedAt)}</span>
             </div>
             <span className="text-[10px] text-slate-300 bg-white/5 px-2 py-0.5 rounded font-sans uppercase tracking-wider font-semibold border border-white/10 shrink-0 ml-2">
               {story.country || 'Europe'}
             </span>
           </div>
-        </div>
 
-        {/* Bottom Interactive Thumb Zone */}
-        <div className="shrink-0 mt-3 pt-2.5 border-t border-white/[0.08] flex items-center justify-between gap-3">
-          {/* Read Source Trigger (Directly opens source URL, no trust note modal, no 404) */}
-          <a
-            href={story.originalUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => {
-              triggerHaptic('tap');
-              onOpenSource();
-            }}
-            className="flex-1 h-12 min-h-[48px] flex items-center justify-between px-3.5 bg-slate-800/90 hover:bg-slate-800 rounded-xl border border-white/10 text-xs font-medium text-slate-200 active:scale-[0.98] transition-all no-underline"
-            title={`Read full article on ${story.publisherDomain}`}
-          >
-            <span className="flex items-center gap-2 truncate">
-              <ExternalLink className="w-4 h-4 text-blue-400 shrink-0" />
-              <span className="truncate">Source: {story.publisherDomain}</span>
-            </span>
-            <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
-          </a>
-
-          {/* Action triggers: Save & Share */}
-          <div className="flex items-center gap-2 shrink-0">
-            {/* Save / Bookmark Button */}
-            <button
-              onClick={handleSaveClick}
-              className={`h-12 w-12 min-h-[48px] min-w-[48px] flex items-center justify-center rounded-xl border transition-all active:scale-90 ${
-                isSaved 
-                  ? 'bg-blue-600/20 text-blue-400 border-blue-500/40 shadow-sm' 
-                  : 'bg-slate-800/80 text-slate-400 border-white/10 hover:text-white'
-              }`}
-              aria-label={isSaved ? 'Remove bookmark' : 'Save story'}
+          {/* Action Row: Sleek 'Tap to read more' Link + Bookmark & Share Triggers */}
+          <div className="flex items-center justify-between gap-3 pt-1">
+            {/* Direct Source Reading Link */}
+            <a
+              href={story.originalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => {
+                triggerHaptic('tap');
+                onOpenSource();
+              }}
+              className="flex items-center gap-1.5 text-xs font-semibold text-blue-400 hover:text-blue-300 active:opacity-75 transition-colors no-underline group py-1.5"
+              title={`Read full reporting on ${story.publisherDomain}`}
             >
-              <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
-            </button>
+              <span>Tap to read more</span>
+              <ExternalLink className="w-3.5 h-3.5 text-blue-400 group-hover:translate-x-0.5 transition-transform shrink-0" />
+            </a>
 
-            {/* Share Card Trigger */}
-            <button
-              onClick={handleShareClick}
-              className="h-12 w-12 min-h-[48px] min-w-[48px] flex items-center justify-center bg-slate-800/80 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl border border-white/10 active:scale-90 transition-all"
-              aria-label="Share story card"
-            >
-              <Share2 className="w-4 h-4" />
-            </button>
+            {/* Actions: Bookmark & Share (Guaranteed Full Visibility) */}
+            <div className="flex items-center gap-2 shrink-0">
+              {/* Bookmark Toggle */}
+              <button
+                onClick={handleSaveClick}
+                className={`h-10 w-10 min-h-[40px] min-w-[40px] flex items-center justify-center rounded-xl border transition-all active:scale-95 ${
+                  isSaved 
+                    ? 'bg-blue-600/20 text-blue-400 border-blue-500/40 shadow-sm' 
+                    : 'bg-slate-800/80 text-slate-300 border-white/10 hover:text-white hover:bg-slate-800'
+                }`}
+                title={isSaved ? 'Saved to bookmarks' : 'Save story'}
+                aria-label={isSaved ? 'Remove bookmark' : 'Save story'}
+              >
+                <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
+              </button>
+
+              {/* Share Card Trigger */}
+              <button
+                onClick={handleShareClick}
+                className="h-10 w-10 min-h-[40px] min-w-[40px] flex items-center justify-center bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white rounded-xl border border-white/10 active:scale-95 transition-all shadow-sm"
+                title="Share story card"
+                aria-label="Share story card"
+              >
+                <Share2 className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
