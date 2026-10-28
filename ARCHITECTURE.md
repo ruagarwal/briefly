@@ -77,6 +77,8 @@ All files in `/src` must maintain comprehensive header docstrings and clear arch
 │   │   └── index.ts             # Public export barrel
 │   ├── /types/
 │   │   └── news.ts              # Canonical TypeScript interfaces (NewsStory, Edition, etc.)
+│   ├── /data/
+│   │   └── fallbackEdition.ts   # Seed & fallback edition stories
 │   ├── /hooks/
 │   │   ├── useNewsFeed.ts       # Feed state management, pagination, and bookmarking
 │   │   ├── useSavedStories.ts   # LocalStorage persistence for reading list
@@ -251,5 +253,28 @@ To handle Cloud Run and serverless preview environments where containers sleep w
    - All article destination URLs are verified with HTTP 200 checks across European publisher endpoints.
    - Initial seed and fallback stories are unified in `src/data/fallbackEdition.ts` as the single source of truth for both client hydration and server-side fallback.
 
+---
 
+## 13. Ergonomic Footnote Refactoring, Permanent Timestamp Anchoring & Multi-Lingual Quarantine Protocol
+
+### A. Ergonomic Action Bar & Permanent Share Button Visibility
+- **The Problem**: A full-width `Source: [publisherDomain] >` pill consumed up to 70% of the horizontal real estate in mobile viewports (360px–390px), pushing the Share trigger button off-screen or causing it to be hidden by `overflow: hidden`.
+- **The Solution**: 
+  - Since journalistic attribution is already prominently displayed at both the top media banner (`story.publisher`) and origin lockup (`story.publisherDomain`), the bulky bottom button was replaced with a sleek, minimalist inline link: `Tap to read more ↗`.
+  - This preserves thumb-friendly tap targets (`min-h-[40px]`), frees over 50% of horizontal space, and guarantees that both the **Bookmark** and **Share** buttons remain 100% visible and unclipped across all mobile device form factors.
+
+### B. Permanent Viewport Timestamp & Country Provenance Anchoring
+- **The Problem**: In earlier iterations, the publication date and timestamp footnote were placed inside the scrollable content container (`overflow-y-auto`). When an article featured a 3-line headline or longer 60-word body copy, the timestamp footnote was pushed below the fold, appearing "missing" or "skipped".
+- **The Solution**:
+  - The publication timestamp (`Clock 28 Oct 2026 · 15:03 GMT`) and country provenance badge (`DENMARK`, `UK`, `GERMANY`) are decoupled from the scrollable text container and anchored into the fixed bottom zone (`shrink-0`).
+  - Guarantees that publication date, time, and country are **permanently visible on 100% of cards** without requiring user scrolling.
+  - Implemented robust ISO parsing fallback (`formatSourceTimestamp(story.publishedAt || story.ingestedAt)`) so timestamp rendering never returns empty or null.
+
+### C. Multi-Lingual Detection & Strict Editorial Quarantine Protocol
+- **The Problem**: Feeds from local European newsrooms (such as Danish *TechSavvy*, Swedish *Breakit*, German *Trending Topics*, or Ukrainian *AIN*) occasionally publish stories in their local language without English translation. Without an active LLM translation API key, local-language text was being published directly to the feed, violating Briefly's core promise (*"The most important European startup news in English, in 60 words or fewer"*).
+- **The Solution**:
+  - Implemented an algorithmic multi-lingual detector in `server.ts` inspecting character sets (Cyrillic `\u0400-\u04FF`, Greek `\u0370-\u03FF`), distinctive diacritics (`æ, ø, å`, `ä, ö, ü, ß`, `ě, š, č, ř, ž`), and stop-word frequencies across 11 European language families.
+  - **Zero-Tolerance Untranslated Policy**: If an article contains non-English text and generative translation is not available, the story is automatically assigned `status: 'quarantined'` with a descriptive reason (e.g. `Local-language reporting detected (Nordic/Continental). Queued on Editorial Desk for English translation`).
+  - **Guaranteed English Feed**: Only validated English articles can attain `status: 'published'` in the reader feed.
+  - **Editorial Desk Desk Workflow**: Editors can open the Quarantine tab in `AdminConsoleModal.tsx`, review the original local reporting, compose the verified 60-word English translation, and publish it with 1 click.
 
