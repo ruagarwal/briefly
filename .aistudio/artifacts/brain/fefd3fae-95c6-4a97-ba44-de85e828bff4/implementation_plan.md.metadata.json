@@ -1,0 +1,6 @@
+{
+  "summary":  "Comprehensive architectural implementation plan for the European Startup News mobile app (InShorts-inspired, <=60-word summaries, pan-European coverage, automated daily ingestion with quarantine queue, local-first reading and saving, and Capacitor native packaging for iOS and Android).",
+  "updatedAt":  "2026-10-26T20:54:59.610813631Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

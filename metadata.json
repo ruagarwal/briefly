@@ -1,0 +1,6 @@
+{
+  "name": "Briefly - European Startup News in 60 Words",
+  "description": "The most important European startup news in 60 words or fewer. Inspired by InShorts, curated from verified sources with automated AI summarization.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

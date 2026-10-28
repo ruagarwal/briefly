@@ -1,0 +1,29 @@
+/**
+ * Capacitor configuration for Briefly
+ * https://capacitorjs.com/docs/config
+ */
+const config = {
+  appId: 'com.briefly.news',
+  appName: 'Briefly',
+  webDir: 'dist',
+  server: {
+    androidScheme: 'https',
+    cleartext: false,
+  },
+  plugins: {
+    SplashScreen: {
+      launchShowDuration: 1500,
+      launchAutoHide: true,
+      backgroundColor: '#0b0f17',
+      androidSplashResourceName: 'splash',
+      androidScaleType: 'CENTER_CROP',
+      showSpinner: false,
+    },
+    StatusBar: {
+      style: 'DARK',
+      backgroundColor: '#0b0f17',
+    },
+  },
+};
+
+export default config;
