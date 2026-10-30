@@ -14,6 +14,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { DailyEdition, NewsStory } from '../types/news.ts';
 import { FALLBACK_EDITION } from '../data/fallbackEdition.ts';
+import { logTelemetryEvent } from './useAnonymousAnalytics.ts';
 
 const CACHED_EDITION_STORAGE_KEY = 'briefly_cached_edition_v4';
 const BOOKMARKS_STORAGE_KEY = 'briefly_bookmarks_v1';
@@ -67,8 +68,14 @@ export function useNewsFeed() {
     }
     setError(null);
 
+    const startTime = performance.now();
     try {
       const res = await fetch('/api/feed/today');
+      const latencyMs = Math.round(performance.now() - startTime);
+      if (latencyMs > 3000) {
+        logTelemetryEvent('slow_load', { latencyMs });
+      }
+
       if (!res.ok) {
         throw new Error(`HTTP ${res.status}: ${res.statusText}`);
       }
@@ -92,6 +99,7 @@ export function useNewsFeed() {
           fetchFeed(retryCount + 1);
         }, delay);
       } else {
+        logTelemetryEvent('feed_load_failure', { errorMessage: err?.message || 'Feed fetch failed' });
         // If we already have a cached edition, keep showing it without blocking error!
         if (!edition) {
           setError(err?.message || 'Connecting to news server...');

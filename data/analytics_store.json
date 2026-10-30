@@ -1,0 +1,16 @@
+{
+  "totalSessions": 0,
+  "dailyActiveUsers": {},
+  "cardViewsByIndex": {},
+  "feedCompletions": 0,
+  "quickBounces": 0,
+  "sourceClicks": 0,
+  "saves": 0,
+  "shares": 0,
+  "sessionDurationsSec": [],
+  "dwellTimesMs": [],
+  "readerCountries": {},
+  "feedLoadFailures": 0,
+  "clientCrashes": 0,
+  "slowLoadWarnings": 0
+}

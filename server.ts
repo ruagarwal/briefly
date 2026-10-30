@@ -75,6 +75,7 @@ const CADENCE_CONFIG_FILE = path.join(DATA_DIR, 'cadence_config.json');
 const CADENCE_BACKUP_FILE = path.join(DATA_DIR, 'cadence_backup.json');
 const RANKING_CONFIG_FILE = path.join(DATA_DIR, 'ranking_config.json');
 const RANKING_METRICS_FILE = path.join(DATA_DIR, 'ranking_metrics.json');
+const ANALYTICS_STORE_FILE = path.join(DATA_DIR, 'analytics_store.json');
 
 export interface CadenceConfig {
   mode: 'cadence-6h' | 'legacy-daily';
@@ -1466,43 +1467,105 @@ app.post('/api/share/card-preview', (req, res) => {
 // ---------------- ANONYMOUS GDPR-COMPLIANT TELEMETRY ----------------
 interface AggregatedTelemetryStore {
   totalSessions: number;
-  cardViewsByIndex: Record<number, number>;
+  dailyActiveUsers: Record<string, string[]>;
+  cardViewsByIndex: Record<string | number, number>;
   feedCompletions: number;
   quickBounces: number;
   sourceClicks: number;
   saves: number;
   shares: number;
+  sessionDurationsSec: number[];
   dwellTimesMs: number[];
+  readerCountries: Record<string, number>;
+  feedLoadFailures: number;
+  clientCrashes: number;
+  slowLoadWarnings: number;
 }
 
-const analyticsStore: AggregatedTelemetryStore = {
-  totalSessions: 42,
-  cardViewsByIndex: {
-    0: 42,
-    1: 38,
-    2: 34,
-    3: 31,
-    4: 28,
-    5: 26,
-    6: 24
-  },
-  feedCompletions: 24,
-  quickBounces: 4,
-  sourceClicks: 18,
-  saves: 14,
-  shares: 8,
-  dwellTimesMs: [12000, 15000, 9000, 18000]
+const DEFAULT_ANALYTICS_STORE: AggregatedTelemetryStore = {
+  totalSessions: 0,
+  dailyActiveUsers: {},
+  cardViewsByIndex: {},
+  feedCompletions: 0,
+  quickBounces: 0,
+  sourceClicks: 0,
+  saves: 0,
+  shares: 0,
+  sessionDurationsSec: [],
+  dwellTimesMs: [],
+  readerCountries: {},
+  feedLoadFailures: 0,
+  clientCrashes: 0,
+  slowLoadWarnings: 0
 };
 
+let analyticsStore: AggregatedTelemetryStore = readJsonFile<AggregatedTelemetryStore>(ANALYTICS_STORE_FILE, DEFAULT_ANALYTICS_STORE);
+writeJsonFile(ANALYTICS_STORE_FILE, analyticsStore);
+
+function inferCountryFromTimezone(timeZone?: string, countryHint?: string): string {
+  if (countryHint && countryHint.length > 2) return countryHint;
+  if (!timeZone) return 'Unknown';
+  const tz = timeZone.toLowerCase();
+  if (tz.includes('london')) return 'United Kingdom';
+  if (tz.includes('calcutta') || tz.includes('kolkata')) return 'India';
+  if (tz.includes('berlin')) return 'Germany';
+  if (tz.includes('paris')) return 'France';
+  if (tz.includes('stockholm')) return 'Sweden';
+  if (tz.includes('amsterdam')) return 'Netherlands';
+  if (tz.includes('madrid')) return 'Spain';
+  if (tz.includes('dublin')) return 'Ireland';
+  if (tz.includes('helsinki')) return 'Finland';
+  if (tz.includes('tallinn')) return 'Estonia';
+  if (tz.includes('zurich')) return 'Switzerland';
+  if (tz.includes('oslo')) return 'Norway';
+  if (tz.includes('copenhagen')) return 'Denmark';
+  if (tz.includes('warsaw')) return 'Poland';
+  if (tz.includes('rome')) return 'Italy';
+  if (tz.includes('vienna')) return 'Austria';
+  if (tz.includes('brussels')) return 'Belgium';
+  if (tz.includes('lisbon')) return 'Portugal';
+  if (tz.includes('athens')) return 'Greece';
+  if (tz.includes('new_york') || tz.includes('chicago') || tz.includes('los_angeles') || tz.includes('denver')) return 'United States';
+  if (tz.includes('singapore')) return 'Singapore';
+  if (tz.includes('dubai')) return 'UAE';
+  if (tz.includes('tokyo')) return 'Japan';
+  if (tz.includes('sydney') || tz.includes('melbourne')) return 'Australia';
+  return timeZone.split('/')[1]?.replace(/_/g, ' ') || 'Global';
+}
+
 app.post('/api/analytics/event', (req, res) => {
-  const { type, cardIndex, dwellMs } = req.body;
+  const { type, anonId, cardIndex, dwellMs, durationSec, timeZone, country } = req.body;
+  const todayStr = new Date().toISOString().split('T')[0];
 
   if (type === 'session_start') {
     analyticsStore.totalSessions++;
-    analyticsStore.cardViewsByIndex[0] = (analyticsStore.cardViewsByIndex[0] || 0) + 1;
+
+    // Track DAU (Unique persistent device token per day)
+    if (anonId) {
+      if (!analyticsStore.dailyActiveUsers) analyticsStore.dailyActiveUsers = {};
+      if (!analyticsStore.dailyActiveUsers[todayStr]) {
+        analyticsStore.dailyActiveUsers[todayStr] = [];
+      }
+      if (!analyticsStore.dailyActiveUsers[todayStr].includes(anonId)) {
+        analyticsStore.dailyActiveUsers[todayStr].push(anonId);
+      }
+    }
+
+    // Track geographic adoption
+    const detectedCountry = inferCountryFromTimezone(timeZone, country);
+    if (!analyticsStore.readerCountries) analyticsStore.readerCountries = {};
+    analyticsStore.readerCountries[detectedCountry] = (analyticsStore.readerCountries[detectedCountry] || 0) + 1;
   } else if (type === 'card_view' && typeof cardIndex === 'number') {
     analyticsStore.cardViewsByIndex[cardIndex] = (analyticsStore.cardViewsByIndex[cardIndex] || 0) + 1;
     if (dwellMs) analyticsStore.dwellTimesMs.push(dwellMs);
+  } else if (type === 'session_end' || type === 'session_ping') {
+    if (typeof durationSec === 'number' && durationSec > 0) {
+      if (!analyticsStore.sessionDurationsSec) analyticsStore.sessionDurationsSec = [];
+      analyticsStore.sessionDurationsSec.push(Math.round(durationSec));
+      if (analyticsStore.sessionDurationsSec.length > 500) {
+        analyticsStore.sessionDurationsSec.shift();
+      }
+    }
   } else if (type === 'feed_complete') {
     analyticsStore.feedCompletions++;
   } else if (type === 'quick_bounce') {
@@ -1513,22 +1576,103 @@ app.post('/api/analytics/event', (req, res) => {
     analyticsStore.saves++;
   } else if (type === 'share_action') {
     analyticsStore.shares++;
+  } else if (type === 'client_crash') {
+    analyticsStore.clientCrashes = (analyticsStore.clientCrashes || 0) + 1;
+  } else if (type === 'slow_load') {
+    analyticsStore.slowLoadWarnings = (analyticsStore.slowLoadWarnings || 0) + 1;
+  } else if (type === 'feed_load_failure') {
+    analyticsStore.feedLoadFailures = (analyticsStore.feedLoadFailures || 0) + 1;
   }
 
+  writeJsonFile(ANALYTICS_STORE_FILE, analyticsStore);
   res.json({ ok: true });
 });
 
+app.post('/api/analytics/reset', (req, res) => {
+  analyticsStore = {
+    totalSessions: 0,
+    dailyActiveUsers: {},
+    cardViewsByIndex: {},
+    feedCompletions: 0,
+    quickBounces: 0,
+    sourceClicks: 0,
+    saves: 0,
+    shares: 0,
+    sessionDurationsSec: [],
+    dwellTimesMs: [],
+    readerCountries: {},
+    feedLoadFailures: 0,
+    clientCrashes: 0,
+    slowLoadWarnings: 0
+  };
+  writeJsonFile(ANALYTICS_STORE_FILE, analyticsStore);
+  res.json({ ok: true, message: 'Analytics reset' });
+});
+
 app.get('/api/analytics/summary', (req, res) => {
-  const total = Math.max(analyticsStore.totalSessions, 1);
-  const publishedCount = allStories.filter(s => s.status === 'published').length;
+  const publishedStories = allStories.filter(s => s.status === 'published');
+  const publishedCount = publishedStories.length;
 
+  const todayStr = new Date().toISOString().split('T')[0];
+  const todayDauList = analyticsStore.dailyActiveUsers?.[todayStr] || [];
+  const dau = todayDauList.length;
+
+  // Average session duration (seconds) - strictly real
+  const durations = analyticsStore.sessionDurationsSec || [];
+  const avgSessionDurationSec = durations.length > 0
+    ? Math.round(durations.reduce((a, b) => a + b, 0) / durations.length)
+    : 0;
+
+  // Stories per day breakdown (Today's active briefing vs 72h Catch-up archive)
+  const nowMs = Date.now();
+  const activeEditionStories = publishedStories.filter(s => {
+    const ageHours = (nowMs - new Date(s.publishedAt).getTime()) / (1000 * 60 * 60);
+    return ageHours <= 24;
+  });
+  const activeEditionCount = activeEditionStories.length > 0 ? activeEditionStories.length : Math.min(20, publishedCount);
+  const archive72hCount = Math.max(0, publishedCount - activeEditionCount);
+
+  // Health and Drop-Off Diagnostics
+  const crashes = analyticsStore.clientCrashes || 0;
+  const slowLoads = analyticsStore.slowLoadWarnings || 0;
+  const feedFailures = analyticsStore.feedLoadFailures || 0;
+  const unhealthySessions = crashes + feedFailures;
+  const healthySessionsPercent = analyticsStore.totalSessions > 0
+    ? Number((((analyticsStore.totalSessions - unhealthySessions) / analyticsStore.totalSessions) * 100).toFixed(1))
+    : 100;
+
+  // Drop-off causation breakdown
+  const totalDropOffs = Math.max(0, analyticsStore.totalSessions - analyticsStore.feedCompletions);
+  let naturalDecayPercent = totalDropOffs > 0 ? 100 : 0;
+  let slowLoadPercent = 0;
+  let feedFailurePercent = 0;
+  let crashPercent = 0;
+
+  if (totalDropOffs > 0) {
+    const crashDropOffs = Math.min(crashes, totalDropOffs);
+    const failureDropOffs = Math.min(feedFailures, totalDropOffs - crashDropOffs);
+    const slowDropOffs = Math.min(slowLoads, totalDropOffs - crashDropOffs - failureDropOffs);
+    const naturalDecay = Math.max(0, totalDropOffs - crashDropOffs - failureDropOffs - slowDropOffs);
+
+    naturalDecayPercent = Math.round((naturalDecay / totalDropOffs) * 100);
+    slowLoadPercent = Math.round((slowDropOffs / totalDropOffs) * 100);
+    feedFailurePercent = Math.round((failureDropOffs / totalDropOffs) * 100);
+    crashPercent = Math.round((crashDropOffs / totalDropOffs) * 100);
+  }
+
+  // Funnel progression across cards
   const funnelSteps = [];
-  let prevViews = total;
+  let prevViews = analyticsStore.totalSessions;
+  const maxSteps = Math.min(publishedCount, 30);
 
-  for (let i = 0; i < publishedCount; i++) {
+  for (let i = 0; i < maxSteps; i++) {
     const views = analyticsStore.cardViewsByIndex[i] || 0;
-    const retentionPercent = Math.round((views / total) * 100);
-    const dropOffPercent = prevViews > 0 ? Math.max(0, Math.round(((prevViews - views) / prevViews) * 100)) : 0;
+    const retentionPercent = analyticsStore.totalSessions > 0
+      ? Math.round((views / analyticsStore.totalSessions) * 100)
+      : 0;
+    const dropOffPercent = prevViews > 0 
+      ? Math.max(0, Math.round(((prevViews - views) / prevViews) * 100)) 
+      : 0;
 
     funnelSteps.push({
       step: `Story ${i + 1}`,
@@ -1541,22 +1685,45 @@ app.get('/api/analytics/summary', (req, res) => {
     prevViews = views;
   }
 
-  const completionRate = Math.round((analyticsStore.feedCompletions / total) * 100);
+  const completionRate = analyticsStore.totalSessions > 0
+    ? Math.round((analyticsStore.feedCompletions / analyticsStore.totalSessions) * 100)
+    : 0;
   
-  const totalCardsViewed = Object.entries(analyticsStore.cardViewsByIndex).reduce((acc, [idx, count]) => {
-    return acc + (count * (parseInt(idx, 10) + 1));
-  }, 0);
-  const avgDepth = Number((totalCardsViewed / total).toFixed(1));
+  const totalCardsViewed = Object.values(analyticsStore.cardViewsByIndex).reduce((acc, count) => acc + count, 0);
+  const avgDepth = analyticsStore.totalSessions > 0
+    ? Number((totalCardsViewed / analyticsStore.totalSessions).toFixed(1))
+    : 0;
 
   res.json({
+    dau,
     totalSessions: analyticsStore.totalSessions,
     averageReadingDepth: Math.min(avgDepth, publishedCount),
+    avgSessionDurationSec,
     completionRatePercent: completionRate,
     quickBounces: analyticsStore.quickBounces,
     sourceClicks: analyticsStore.sourceClicks,
     saves: analyticsStore.saves,
     shares: analyticsStore.shares,
     funnelSteps,
+    readerCountries: analyticsStore.readerCountries || {},
+    storiesPerDay: {
+      activeEdition: activeEditionCount,
+      archive72h: archive72hCount,
+      totalAvailable: publishedCount,
+      dailyCadenceTarget: 25
+    },
+    healthDiagnostics: {
+      feedLoadFailures: feedFailures,
+      clientCrashes: crashes,
+      slowLoadWarnings: slowLoads,
+      healthySessionsPercent,
+      dropOffCausation: {
+        naturalDecayPercent,
+        slowLoadPercent,
+        feedFailurePercent,
+        crashPercent
+      }
+    },
     lastUpdated: new Date().toISOString()
   });
 });

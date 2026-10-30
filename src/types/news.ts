@@ -138,18 +138,29 @@ export interface PipelineExecutionResult {
 
 export type AnalyticsEventType = 
   | 'session_start'
+  | 'session_ping'
+  | 'session_end'
   | 'card_view'
   | 'feed_complete'
   | 'quick_bounce'
   | 'source_click'
   | 'save_action'
-  | 'share_action';
+  | 'share_action'
+  | 'client_crash'
+  | 'slow_load'
+  | 'feed_load_failure';
 
 export interface AnalyticsEvent {
   type: AnalyticsEventType;
+  anonId?: string;
   storyId?: string;
   cardIndex?: number;
   dwellMs?: number;
+  durationSec?: number;
+  country?: string;
+  timeZone?: string;
+  errorMessage?: string;
+  latencyMs?: number;
 }
 
 export interface FunnelStep {
@@ -160,15 +171,43 @@ export interface FunnelStep {
   dropOffPercent: number;
 }
 
+export interface DropOffCausation {
+  naturalDecayPercent: number;
+  slowLoadPercent: number;
+  feedFailurePercent: number;
+  crashPercent: number;
+}
+
+export interface HealthDiagnostics {
+  feedLoadFailures: number;
+  clientCrashes: number;
+  slowLoadWarnings: number;
+  healthySessionsPercent: number;
+  dropOffCausation: DropOffCausation;
+}
+
+export interface StoriesPerDayMetrics {
+  activeEdition: number;
+  archive72h: number;
+  totalAvailable: number;
+  dailyCadenceTarget: number;
+}
+
 export interface AnonymousAnalyticsSummary {
+  dau: number; // Daily Active Users (today)
   totalSessions: number;
-  averageReadingDepth: number;
+  averageReadingDepth: number; // Stories per user per session
+  avgSessionDurationSec: number; // Time spent on app (seconds)
   completionRatePercent: number;
   quickBounces: number;
   sourceClicks: number;
   saves: number;
   shares: number;
   funnelSteps: FunnelStep[];
+  readerCountries: Record<string, number>;
+  storiesPerDay: StoriesPerDayMetrics;
+  healthDiagnostics: HealthDiagnostics;
   lastUpdated: string;
 }
+
 
