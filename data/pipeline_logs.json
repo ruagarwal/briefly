@@ -1,5 +1,29 @@
 [
   {
+    "runId": "run-1793389823624",
+    "timestamp": "2026-10-30T19:50:29.764Z",
+    "durationMs": 6140,
+    "sourcesProcessed": 41,
+    "rawArticlesFetched": 959,
+    "articlesAfterDedup": 37,
+    "articlesQualified": 25,
+    "publishedCount": 5,
+    "quarantinedCount": 20,
+    "errors": []
+  },
+  {
+    "runId": "run-1793389741381",
+    "timestamp": "2026-10-30T19:49:09.696Z",
+    "durationMs": 8315,
+    "sourcesProcessed": 41,
+    "rawArticlesFetched": 959,
+    "articlesAfterDedup": 63,
+    "articlesQualified": 25,
+    "publishedCount": 5,
+    "quarantinedCount": 20,
+    "errors": []
+  },
+  {
     "runId": "run-1793205749335",
     "timestamp": "2026-10-28T16:42:35.689Z",
     "durationMs": 6354,

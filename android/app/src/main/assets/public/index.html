@@ -21,22 +21,36 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-    <script type="module" crossorigin src="/assets/index-CfurSarP.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-V2OIuMJ2.css">
+    <style>html,body{overscroll-behavior:none;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}</style>
+    <script type="module" crossorigin src="/assets/index-ChZnX2jU.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-V6IM3_8K.css">
   </head>
-  <body class="h-full w-full overflow-hidden select-none touch-manipulation antialiased font-sans bg-slate-950">
+  <body class="h-full w-full overflow-hidden select-none touch-none antialiased font-sans bg-slate-950">
     <div id="root" class="h-full w-full"></div>
     <script>
-      // Register service worker for standalone PWA WebAPK generation
+      // Service Worker registration with instant update check
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js').then((reg) => {
-            console.log('Briefly SW registered:', reg.scope);
+            reg.update().catch(() => {});
           }).catch((err) => {
-            console.warn('Briefly SW failed:', err);
+            console.warn('Briefly SW registration note:', err);
           });
         });
       }
+
+      // Cold start / bootstrap recovery guard
+      window.addEventListener('error', function(e) {
+        var root = document.getElementById('root');
+        if (root && root.children.length === 0) {
+          root.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#070a0f;color:#e2e8f0;font-family:sans-serif;padding:24px;text-align:center;">' +
+            '<div style="width:48px;height:48px;border-radius:14px;background:#2563eb;color:#fff;font-weight:800;font-size:24px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;">B</div>' +
+            '<h2 style="font-size:18px;margin:0 0 8px 0;font-weight:700;">Briefly is starting</h2>' +
+            '<p style="font-size:13px;color:#94a3b8;margin:0 0 20px 0;max-width:280px;line-height:1.5;">Preparing today’s European startup intelligence...</p>' +
+            '<button onclick="if(window.caches){caches.keys().then(function(k){k.forEach(function(n){caches.delete(n);});});}window.location.reload();" style="padding:12px 24px;border-radius:12px;background:#2563eb;color:#fff;border:none;font-weight:600;font-size:14px;cursor:pointer;">Tap to Reload</button>' +
+          '</div>';
+        }
+      });
     </script>
   </body>
 </html>

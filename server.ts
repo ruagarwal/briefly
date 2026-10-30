@@ -681,7 +681,7 @@ MANDATORY RULES:
 
     try {
       const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-3.8-flash',
         contents: prompt,
         config: {
           responseMimeType: 'application/json',
@@ -1059,6 +1059,11 @@ async function checkAndRunScheduledIngestion(force = false) {
 
 // Get today's active feed (Specification-compliant 6-dimension ranking & continuous 72-hour archive)
 app.get('/api/feed/today', (req, res) => {
+  // Trigger background check: if an edition slot (03:00, 09:30, 14:30, 19:00 GMT) is due, run pipeline asynchronously
+  checkAndRunScheduledIngestion(false).catch(err => {
+    console.error('[Feed Request] Background scheduled check error:', err);
+  });
+
   const currentUtcIso = new Date().toISOString().split('T')[0];
   const now = new Date();
   const nowMs = now.getTime();
@@ -1606,6 +1611,19 @@ async function startServer() {
   });
 }
 
-startServer().catch(err => {
-  console.error('Failed to start server:', err);
-});
+if (process.env.INGEST_ONLY === 'true') {
+  console.log('[CLI] Running standalone ingestion pipeline...');
+  runIngestionPipeline()
+    .then((result) => {
+      console.log(`[CLI] Ingestion finished successfully. ${result.publishedCount} stories published, ${result.quarantinedCount} quarantined.`);
+      process.exit(0);
+    })
+    .catch((err) => {
+      console.error('[CLI] Ingestion failed:', err);
+      process.exit(1);
+    });
+} else {
+  startServer().catch(err => {
+    console.error('Failed to start server:', err);
+  });
+}

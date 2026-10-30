@@ -194,15 +194,15 @@ export const StoryCard: React.FC<StoryCardProps> = ({
             </div>
             
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-mono font-semibold uppercase tracking-wider mb-2.5">
-              <Sparkles className="w-3.5 h-3.5" /> 30 OF 30 STORIES COMPLETED
+              <Sparkles className="w-3.5 h-3.5" /> TODAY'S BRIEFING COMPLETED
             </div>
 
             <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight mb-2.5 leading-snug">
-              You're all caught up on today's Top 30!
+              {story.title || "You're all caught up on today's Top European Stories!"}
             </h1>
 
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-sm mb-3">
-              You've reviewed today's highest-priority European tech intelligence. Keep swiping up to browse earlier reporting from the rolling 72-hour European catch-up archive.
+              {story.summary || "You've reviewed today's highest-priority European tech intelligence. Keep swiping up to browse earlier reporting from the rolling 72-hour European catch-up archive."}
             </p>
           </div>
 

@@ -1,89 +1,207 @@
 {
-  "editionAsOf": "2026-10-30T08:48:46.056Z",
+  "editionAsOf": "2026-10-30T19:58:13.979Z",
   "configVersion": "1.0",
-  "candidatesTotal": 10,
-  "candidatesEligible": 10,
-  "selectedCount": 10,
-  "distinctCountriesCount": 9,
+  "candidatesTotal": 34,
+  "candidatesEligible": 34,
+  "selectedCount": 20,
+  "distinctCountriesCount": 11,
   "countryDistribution": {
+    "Pan-European": 9,
     "Germany": 1,
     "Bulgaria": 1,
+    "Ireland": 2,
+    "Finland / Nordics": 1,
     "Sweden": 1,
-    "Lithuania": 1,
     "Italy": 1,
     "United Kingdom": 1,
-    "Ireland": 1,
     "Austria": 1,
-    "Pan-European": 2
+    "Luxembourg": 1,
+    "Lithuania": 1
   },
   "countryShareTop3": [
     {
       "country": "Pan-European",
-      "sharePercent": 20
+      "sharePercent": 45
+    },
+    {
+      "country": "Ireland",
+      "sharePercent": 10
     },
     {
       "country": "Germany",
-      "sharePercent": 10
-    },
-    {
-      "country": "Bulgaria",
-      "sharePercent": 10
+      "sharePercent": 5
     }
   ],
   "sourceDistribution": {
-    "EU-Startups": 2,
+    "Tech.eu": 4,
+    "EU-Startups": 5,
+    "TechCrunch Europe": 2,
     "The Recursive": 2,
+    "Silicon Republic": 2,
+    "ArcticStartup": 1,
     "Breakit": 1,
-    "Tech.eu": 2,
-    "Silicon Republic": 1,
     "Trending Topics": 1,
+    "Silicon Luxembourg": 1,
     "Sifted": 1
   },
   "sourceShareTop3": [
     {
       "source": "EU-Startups",
-      "sharePercent": 20
-    },
-    {
-      "source": "The Recursive",
-      "sharePercent": 20
+      "sharePercent": 25
     },
     {
       "source": "Tech.eu",
       "sharePercent": 20
+    },
+    {
+      "source": "TechCrunch Europe",
+      "sharePercent": 10
     }
   ],
   "topicDistribution": {
+    "AI & DeepTech": 10,
     "SaaS & B2B": 1,
-    "Funding & Deals": 2,
+    "Funding & Deals": 4,
     "M&A & Exits": 1,
-    "AI & DeepTech": 2,
     "HealthTech & Bio": 1,
     "Policy & Ecosystem": 3
   },
-  "largestTopicSharePercent": 30,
+  "largestTopicSharePercent": 50,
   "eventTypeDistribution": {
+    "funding": 9,
     "commercial_deployment": 2,
-    "funding": 6,
-    "restructuring": 1,
-    "general_development": 1
+    "general_development": 8,
+    "restructuring": 1
   },
-  "crossBorderCount": 2,
+  "crossBorderCount": 9,
   "freshnessDistribution": {
-    "under3h": 2,
-    "under6h": 4,
-    "under12h": 4,
-    "under24h": 0,
+    "under3h": 1,
+    "under6h": 6,
+    "under12h": 3,
+    "under24h": 10,
     "over24h": 0
   },
   "provenanceDistribution": {
-    "original_reporting": 10,
+    "original_reporting": 20,
     "independently_corroborated": 0,
     "primary_announcement": 0,
     "ecosystem_listing": 0,
     "developing_unverified": 0
   },
-  "qualityGateExclusions": [],
+  "qualityGateExclusions": [
+    {
+      "storyId": "story-1793267527365-8wmvd",
+      "title": "Africa's Startup Ecosystem: Who Gets to Build and Fund Africa's Next Economic Phase?",
+      "reason": "Published outside the 24-hour edition window (34.2h ago)",
+      "intrinsicScore": 48.57,
+      "evidenceConfidence": 90,
+      "ageHours": 34.2
+    },
+    {
+      "storyId": "story-1793267527365-qjat2",
+      "title": "Ireland’s Vectigo unveils new road safety platform in the US",
+      "reason": "Published outside the 24-hour edition window (35.1h ago)",
+      "intrinsicScore": 52.98,
+      "evidenceConfidence": 95,
+      "ageHours": 35.1
+    },
+    {
+      "storyId": "story-1793267527365-y3qai",
+      "title": "Fronted raises €1.7M to simplify global hiring and business expansion",
+      "reason": "Published outside the 24-hour edition window (35h ago)",
+      "intrinsicScore": 63.25,
+      "evidenceConfidence": 95,
+      "ageHours": 35
+    },
+    {
+      "storyId": "story-1793267527364-8ycfr",
+      "title": "Rise of AI not deterring parents from backing their child’s STEM interests",
+      "reason": "Published outside the 24-hour edition window (34.7h ago)",
+      "intrinsicScore": 58.78,
+      "evidenceConfidence": 95,
+      "ageHours": 34.7
+    },
+    {
+      "storyId": "story-1793267527363-egbrp",
+      "title": "BY Venture Partners closes $60M Fund III and opens Lisbon office to deepen European push",
+      "reason": "Published outside the 24-hour edition window (34.6h ago)",
+      "intrinsicScore": 69.28,
+      "evidenceConfidence": 95,
+      "ageHours": 34.6
+    },
+    {
+      "storyId": "story-1793263947776-bf9p7",
+      "title": "Auriga Partners reaches €80 million interim close for second fund dedicated to cybersecurity",
+      "reason": "Published outside the 24-hour edition window (36.5h ago)",
+      "intrinsicScore": 63.88,
+      "evidenceConfidence": 95,
+      "ageHours": 36.5
+    },
+    {
+      "storyId": "story-1793263947776-6pwlh",
+      "title": "Entourage raises €100M for second fund, targeting AI, robotics and deeptech",
+      "reason": "Published outside the 24-hour edition window (37h ago)",
+      "intrinsicScore": 67.77,
+      "evidenceConfidence": 95,
+      "ageHours": 37
+    },
+    {
+      "storyId": "story-1793263947775-jq9qr",
+      "title": "KineDB raises €850K to rebuild database infrastructure as AI reshapes software development",
+      "reason": "Published outside the 24-hour edition window (37h ago)",
+      "intrinsicScore": 61.77,
+      "evidenceConfidence": 95,
+      "ageHours": 37
+    },
+    {
+      "storyId": "story-1793263947775-8edd0",
+      "title": "EXCLUSIVE: Freiburg’s VUSE XR raises €1.2 million to bring AI-powered mixed reality training to enterprises",
+      "reason": "Published outside the 24-hour edition window (35.9h ago)",
+      "intrinsicScore": 61.18,
+      "evidenceConfidence": 95,
+      "ageHours": 35.9
+    },
+    {
+      "storyId": "story-1793263947774-qyqci",
+      "title": "Autumn Budget 2026: UK tech leaders react to AI investment and business support",
+      "reason": "Published outside the 24-hour edition window (35.4h ago)",
+      "intrinsicScore": 54.7,
+      "evidenceConfidence": 90,
+      "ageHours": 35.4
+    },
+    {
+      "storyId": "story-1793205755688-pl2z1",
+      "title": "UK Budget: Capital gains, work visas and young entrepreneur allowances",
+      "reason": "Published outside the 24-hour edition window (54.1h ago)",
+      "intrinsicScore": 53.91,
+      "evidenceConfidence": 95,
+      "ageHours": 54.1
+    },
+    {
+      "storyId": "story-1793205755688-i22ud",
+      "title": "German startups are betting big on Japan. Should the rest of Europe follow?",
+      "reason": "Published outside the 24-hour edition window (52.2h ago)",
+      "intrinsicScore": 64.49,
+      "evidenceConfidence": 95,
+      "ageHours": 52.2
+    },
+    {
+      "storyId": "story-1793205755687-f7a1t",
+      "title": "Beyond qualifications, how can young people prepare for working life?",
+      "reason": "Published outside the 24-hour edition window (53h ago)",
+      "intrinsicScore": 51.71,
+      "evidenceConfidence": 95,
+      "ageHours": 53
+    },
+    {
+      "storyId": "story-1793205755685-nco32",
+      "title": "Proxima Fusion signs two Japanese partnerships to strengthen Germany's fusion supply chain",
+      "reason": "Published outside the 24-hour edition window (51.9h ago)",
+      "intrinsicScore": 64.5,
+      "evidenceConfidence": 95,
+      "ageHours": 51.9
+    }
+  ],
   "softCapRelaxations": [],
-  "averageIntrinsicScore": 63.7
+  "averageIntrinsicScore": 61.2
 }

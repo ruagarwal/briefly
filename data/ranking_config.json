@@ -1,0 +1,21 @@
+{
+  "editionWindowHours": 24,
+  "editionTargetSize": 25,
+  "editionMaxSize": 30,
+  "freshnessHalfLifeHours": 12,
+  "minimumQualityScore": 50,
+  "minimumEvidenceConfidence": 30,
+  "countrySoftCapShare": 0.25,
+  "topTenCountrySoftCap": 3,
+  "allowSoftCapRelaxation": true,
+  "weights": {
+    "economic": 0.25,
+    "technology": 0.2,
+    "novelty": 0.15,
+    "ecosystem": 0.15,
+    "freshness": 0.15,
+    "evidence": 0.1
+  },
+  "scoringConfigVersion": "1.0",
+  "configVersion": "1.0"
+}
