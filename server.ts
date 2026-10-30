@@ -581,14 +581,7 @@ function synthesizeArticleAlgorithmic(rawArticle: {
   else if (cLower.includes('germany') || cLower.includes('austria') || cLower.includes('switzerland')) region = 'DACH (Germany, Austria, Switzerland)';
   else if (cLower.includes('france') || cLower.includes('netherlands') || cLower.includes('belgium') || cLower.includes('luxembourg')) region = 'France & Benelux';
   else if (cLower.includes('italy') || cLower.includes('spain') || cLower.includes('portugal') || cLower.includes('greece')) region = 'Southern Europe';
-  /**
-   * Architectural Multi-Lingual Guarantee:
-   * To satisfy Briefly's core promise ("concise, high-quality English-language briefing in 60 words or fewer"),
-   * candidate articles must be in fluent English. When the Gemini translation engine is not configured,
-   * any local-language European reporting (Danish, Swedish, German, French, Spanish, Portuguese, Italian,
-   * Czech, Polish, Romanian, Ukrainian) is strictly identified and routed to the Editorial Desk Quarantine Queue.
-   * Editors can review the original local reporting, compose the 60-word English translation, and publish it with 1 click.
-   */
+
   const hasNonLatinScript = /[\u0400-\u04FF\u0370-\u03FF]/.test(cleanTitle + ' ' + cleanDesc);
   const hasDanishNorwegian = /[æøåÆØÅ]/.test(cleanTitle + ' ' + cleanDesc) || 
     /\b(partier|løfter|sløret|deres|dansk|erhvervsliv|af|til|skal|ikke|hvorfor|indlægget|blev|først|udgivet|spurgt)\b/i.test(cleanTitle + ' ' + cleanDesc);
@@ -601,17 +594,6 @@ function synthesizeArticleAlgorithmic(rawArticle: {
 
   const isNonEnglish = hasNonLatinScript || hasDanishNorwegian || hasSwedish || hasGerman || hasRomanceOrSlavic || sourceIsNonEn;
 
-  /**
-   * Pre-Publication Editorial Quality Gate Check:
-   * Validates that the story summary satisfies all production standards:
-   * - Substantive length (>= 28 words, <= 60 words)
-   * - No headline repetition or fragmentary copy
-   * - Complete sentence structure with terminal punctuation (. ! ?)
-   * - Zero ellipsis truncation endings (... / …)
-   * - Zero unescaped HTML entities or bracketed artifacts ([&#8230;])
-   * - Zero cut-off mid-word fragments
-   * If any check fails, the story is quarantined for human editorial review.
-   */
   const qualityGate = passesEditorialQualityGate(cleanTitle, cleanSummary);
 
   let status: StoryStatus = 'published';
