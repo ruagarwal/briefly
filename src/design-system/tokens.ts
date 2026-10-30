@@ -77,13 +77,13 @@ export const tokens = {
     },
   },
 
-  // Motion Curves & Spring Physics
+  // Motion Curves & Spring Physics (Calibrated for instantaneous 60fps card swiping with zero dead-time)
   motion: {
-    // 60fps natural inertial flicking physics
+    // 60fps snappy inertial flicking physics
     spring: {
-      stiffness: 350,
-      damping: 28,
-      mass: 0.8,
+      stiffness: 480,
+      damping: 38,
+      mass: 0.6,
     },
     // Micro-interactions (routine feedback <= 180ms)
     micro: {

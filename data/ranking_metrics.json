@@ -1,0 +1,214 @@
+{
+  "editionAsOf": "2026-10-30T07:44:02.379Z",
+  "configVersion": "1.0",
+  "candidatesTotal": 24,
+  "candidatesEligible": 24,
+  "selectedCount": 7,
+  "distinctCountriesCount": 4,
+  "countryDistribution": {
+    "Pan-European": 3,
+    "Ireland": 2,
+    "United Kingdom": 1,
+    "Central & Eastern Europe": 1
+  },
+  "countryShareTop3": [
+    {
+      "country": "Pan-European",
+      "sharePercent": 43
+    },
+    {
+      "country": "Ireland",
+      "sharePercent": 29
+    },
+    {
+      "country": "United Kingdom",
+      "sharePercent": 14
+    }
+  ],
+  "sourceDistribution": {
+    "Tech.eu": 2,
+    "Silicon Republic": 2,
+    "UKTN (UK Tech News)": 1,
+    "The Recursive": 1,
+    "EU-Startups": 1
+  },
+  "sourceShareTop3": [
+    {
+      "source": "Tech.eu",
+      "sharePercent": 29
+    },
+    {
+      "source": "Silicon Republic",
+      "sharePercent": 29
+    },
+    {
+      "source": "UKTN (UK Tech News)",
+      "sharePercent": 14
+    }
+  ],
+  "topicDistribution": {
+    "AI & DeepTech": 6,
+    "Funding & Deals": 1
+  },
+  "largestTopicSharePercent": 86,
+  "eventTypeDistribution": {
+    "funding": 5,
+    "regulation_policy": 1,
+    "general_development": 1
+  },
+  "crossBorderCount": 3,
+  "freshnessDistribution": {
+    "under3h": 0,
+    "under6h": 0,
+    "under12h": 0,
+    "under24h": 7,
+    "over24h": 0
+  },
+  "provenanceDistribution": {
+    "original_reporting": 7,
+    "independently_corroborated": 0,
+    "primary_announcement": 0,
+    "ecosystem_listing": 0,
+    "developing_unverified": 0
+  },
+  "qualityGateExclusions": [
+    {
+      "storyId": "story-1793263947776-bf9p7",
+      "title": "Auriga Partners reaches €80 million interim close for second fund dedicated to cybersecurity",
+      "reason": "Published outside the 24-hour edition window (24.3h ago)",
+      "intrinsicScore": 65.74,
+      "evidenceConfidence": 95,
+      "ageHours": 24.3
+    },
+    {
+      "storyId": "story-1793263947776-6pwlh",
+      "title": "Entourage raises €100M for second fund, targeting AI, robotics and deeptech",
+      "reason": "Published outside the 24-hour edition window (24.7h ago)",
+      "intrinsicScore": 69.6,
+      "evidenceConfidence": 95,
+      "ageHours": 24.7
+    },
+    {
+      "storyId": "story-1793263947775-jq9qr",
+      "title": "KineDB raises €850K to rebuild database infrastructure as AI reshapes software development",
+      "reason": "Published outside the 24-hour edition window (24.7h ago)",
+      "intrinsicScore": 63.6,
+      "evidenceConfidence": 95,
+      "ageHours": 24.7
+    },
+    {
+      "storyId": "story-1793205755688-pl2z1",
+      "title": "UK Budget: Capital gains, work visas and young entrepreneur allowances",
+      "reason": "Published outside the 24-hour edition window (41.9h ago)",
+      "intrinsicScore": 54.59,
+      "evidenceConfidence": 95,
+      "ageHours": 41.9
+    },
+    {
+      "storyId": "story-1793205755688-i22ud",
+      "title": "German startups are betting big on Japan. Should the rest of Europe follow?",
+      "reason": "Published outside the 24-hour edition window (40h ago)",
+      "intrinsicScore": 65.24,
+      "evidenceConfidence": 95,
+      "ageHours": 40
+    },
+    {
+      "storyId": "story-1793205755687-f7a1t",
+      "title": "Beyond qualifications, how can young people prepare for working life?",
+      "reason": "Published outside the 24-hour edition window (40.7h ago)",
+      "intrinsicScore": 52.43,
+      "evidenceConfidence": 95,
+      "ageHours": 40.7
+    },
+    {
+      "storyId": "story-1793205755685-nco32",
+      "title": "Proxima Fusion signs two Japanese partnerships to strengthen Germany's fusion supply chain",
+      "reason": "Published outside the 24-hour edition window (39.6h ago)",
+      "intrinsicScore": 65.27,
+      "evidenceConfidence": 95,
+      "ageHours": 39.6
+    },
+    {
+      "storyId": "story-uk-budget-founders-relief-2026",
+      "title": "UK Chancellor unveils “Founders’ Relief” in Budget to encourage European tech builders",
+      "reason": "Published outside the 24-hour edition window (40.2h ago)",
+      "intrinsicScore": 50.22,
+      "evidenceConfidence": 90,
+      "ageHours": 40.2
+    },
+    {
+      "storyId": "story-pdkinematics-lithuania-dronetech-2026",
+      "title": "From private equity to precision strikes: Lithuania’s PDKinematics raises round for defense drones",
+      "reason": "Published outside the 24-hour edition window (41.5h ago)",
+      "intrinsicScore": 51.87,
+      "evidenceConfidence": 90,
+      "ageHours": 41.5
+    },
+    {
+      "storyId": "story-magic-vision-italy-deeptech-2026",
+      "title": "Italian computer vision DeepTech Magic Vision raises €600k for automated health monitoring",
+      "reason": "Published outside the 24-hour edition window (43h ago)",
+      "intrinsicScore": 52.25,
+      "evidenceConfidence": 90,
+      "ageHours": 43
+    },
+    {
+      "storyId": "story-pickit-sweden-bankruptcy-2026",
+      "title": "Swedish image curation scaleup Pickit files for bankruptcy in Visby after decade run",
+      "reason": "Published outside the 24-hour edition window (43.5h ago)",
+      "intrinsicScore": 53.47,
+      "evidenceConfidence": 85,
+      "ageHours": 43.5
+    },
+    {
+      "storyId": "story-dare2scale-2026-cohort-see",
+      "title": "Endeavor Bulgaria selects 18 scaleups for Dare2Scale 2026 regional accelerator",
+      "reason": "Published outside the 24-hour edition window (44h ago)",
+      "intrinsicScore": 58.39,
+      "evidenceConfidence": 72,
+      "ageHours": 44
+    },
+    {
+      "storyId": "story-invest-austria-2026-conference",
+      "title": "500+ European tech investors convene at Vienna’s invest.austria conference 2026",
+      "reason": "Published outside the 24-hour edition window (44.5h ago)",
+      "intrinsicScore": 50.89,
+      "evidenceConfidence": 85,
+      "ageHours": 44.5
+    },
+    {
+      "storyId": "story-german-startups-japan-expansion-2026",
+      "title": "German tech scaleups accelerate Japan expansion through bilateral innovation corridor",
+      "reason": "Published outside the 24-hour edition window (45h ago)",
+      "intrinsicScore": 64.36,
+      "evidenceConfidence": 90,
+      "ageHours": 45
+    },
+    {
+      "storyId": "story-swansea-ai-workplace-education-2026",
+      "title": "European AI researchers launch workplace education framework across enterprise hubs",
+      "reason": "Published outside the 24-hour edition window (46h ago)",
+      "intrinsicScore": 52.05,
+      "evidenceConfidence": 95,
+      "ageHours": 46
+    },
+    {
+      "storyId": "story-ai-venture-capital-transformation-2026",
+      "title": "AI tooling triggers structural divergence across European venture capital sourcing",
+      "reason": "Published outside the 24-hour edition window (47h ago)",
+      "intrinsicScore": 49.44,
+      "evidenceConfidence": 72,
+      "ageHours": 47
+    },
+    {
+      "storyId": "story-sifted-executive-talent-split-2026",
+      "title": "European startup executive talent market splits as AI demand eclipses legacy tech roles",
+      "reason": "Published outside the 24-hour edition window (48h ago)",
+      "intrinsicScore": 56.18,
+      "evidenceConfidence": 90,
+      "ageHours": 48
+    }
+  ],
+  "softCapRelaxations": [],
+  "averageIntrinsicScore": 60.4
+}

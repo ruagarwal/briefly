@@ -192,8 +192,8 @@ export const FeedSwiper: React.FC<FeedSwiperProps> = ({
         return;
       }
 
-      // Vertical swipe: snappy 24px threshold
-      if (absY >= 24) {
+      // Vertical swipe: snappy 18px threshold for instantaneous thumb flicking
+      if (absY >= 18) {
         if (deltaY > 0) {
           // Swipe UP -> Next story
           setDirection('up');
@@ -250,7 +250,7 @@ export const FeedSwiper: React.FC<FeedSwiperProps> = ({
       return;
     }
 
-    if (absY >= 30) {
+    if (absY >= 20) {
       if (deltaY > 0) {
         setDirection('up');
         onNext();
@@ -261,16 +261,16 @@ export const FeedSwiper: React.FC<FeedSwiperProps> = ({
     }
   };
 
-  // Debounced mouse wheel handler
+  // Debounced mouse wheel handler with snappy 260ms cooldown
   const handleWheel = (e: React.WheelEvent) => {
     const now = Date.now();
-    if (now - lastWheelTime.current < 450) return;
+    if (now - lastWheelTime.current < 260) return;
 
-    if (e.deltaY > 30) {
+    if (e.deltaY > 25) {
       lastWheelTime.current = now;
       setDirection('up');
       onNext();
-    } else if (e.deltaY < -30) {
+    } else if (e.deltaY < -25) {
       lastWheelTime.current = now;
       setDirection('down');
       onPrev();
@@ -327,26 +327,25 @@ export const FeedSwiper: React.FC<FeedSwiperProps> = ({
       )}
 
       {/* 
-        60fps Animated Story Card with Spring Physics:
-        Avoids layout geometry animation by transitioning solely opacity and y-offset.
+        Instantaneous 60fps Animated Story Card with Spring Physics:
+        Uses `mode="popLayout"` with parallel entrance/exit so there is ZERO blank gap or lag
+        between swiping and the next card appearing.
       */}
-      <AnimatePresence initial={false} mode="wait">
+      <AnimatePresence initial={false} mode="popLayout" custom={direction}>
         <motion.div
           key={currentStory.id}
+          custom={direction}
           initial={{ 
-            opacity: 0, 
-            y: direction === 'up' ? 60 : -60,
-            scale: 0.98
+            opacity: 0.15, 
+            y: direction === 'up' ? '35%' : '-35%'
           }}
           animate={{ 
             opacity: 1, 
-            y: 0,
-            scale: 1
+            y: 0
           }}
           exit={{ 
             opacity: 0, 
-            y: direction === 'up' ? -60 : 60,
-            scale: 0.98
+            y: direction === 'up' ? '-35%' : '35%'
           }}
           transition={{ 
             type: 'spring',
@@ -354,7 +353,7 @@ export const FeedSwiper: React.FC<FeedSwiperProps> = ({
             damping: tokens.motion.spring.damping,
             mass: tokens.motion.spring.mass,
           }}
-          className="w-full h-full"
+          className="w-full h-full absolute inset-0"
         >
           <StoryCard 
             story={currentStory}

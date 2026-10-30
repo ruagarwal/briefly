@@ -1,0 +1,964 @@
+[
+  {
+    "id": "sifted",
+    "name": "Sifted",
+    "domain": "sifted.eu",
+    "rssUrl": "https://sifted.eu/feed",
+    "layer": "Layer 1 - Pan-European",
+    "regions": [
+      "UK & Ireland",
+      "France & Benelux",
+      "DACH (Germany, Austria, Switzerland)",
+      "Pan-European"
+    ],
+    "country": "Pan-European / UK",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 9,
+    "enabled": true,
+    "languages": [
+      "en"
+    ],
+    "sourceRole": "Core pan-European startup newsroom",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "notes": "Backed by FT. In-depth reporting on European scaleups and VC.",
+    "lastIngestedAt": "2026-10-28T16:42:29.483Z",
+    "lastItemCount": 24
+  },
+  {
+    "id": "tech-eu",
+    "name": "Tech.eu",
+    "domain": "tech.eu",
+    "rssUrl": "https://tech.eu/feed/",
+    "layer": "Layer 1 - Pan-European",
+    "regions": [
+      "Pan-European",
+      "Central & Eastern Europe",
+      "Southern Europe"
+    ],
+    "country": "Pan-European",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 9,
+    "enabled": true,
+    "languages": [
+      "en"
+    ],
+    "sourceRole": "Pan-European discovery and reporting",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "notes": "Comprehensive European deal tracking, funding, and M&A.",
+    "lastIngestedAt": "2026-10-28T16:42:29.507Z",
+    "lastItemCount": 20
+  },
+  {
+    "id": "techcrunch-europe",
+    "name": "TechCrunch Europe",
+    "domain": "techcrunch.com",
+    "rssUrl": "https://techcrunch.com/category/startups/feed/",
+    "layer": "Layer 1 - Pan-European",
+    "regions": [
+      "Pan-European",
+      "UK & Ireland"
+    ],
+    "country": "Pan-European",
+    "primaryCategory": "AI & DeepTech",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "en"
+    ],
+    "sourceRole": "Global supplement & major venture rounds",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:29.453Z",
+    "lastItemCount": 20
+  },
+  {
+    "id": "eu-startups",
+    "name": "EU-Startups",
+    "domain": "eu-startups.com",
+    "rssUrl": "https://www.eu-startups.com/feed/",
+    "layer": "Layer 1 - Pan-European",
+    "regions": [
+      "Southern Europe",
+      "DACH (Germany, Austria, Switzerland)",
+      "France & Benelux",
+      "Pan-European"
+    ],
+    "country": "Pan-European",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "en"
+    ],
+    "sourceRole": "Discovery & ecosystem announcements",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:30.506Z",
+    "lastItemCount": 10
+  },
+  {
+    "id": "the-recursive",
+    "name": "The Recursive",
+    "domain": "therecursive.com",
+    "rssUrl": "https://therecursive.com/feed/",
+    "layer": "Layer 1 - Pan-European",
+    "regions": [
+      "Central & Eastern Europe",
+      "Pan-European"
+    ],
+    "country": "Central & Eastern Europe",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "en"
+    ],
+    "sourceRole": "Regional supplement for CEE innovation",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:29.526Z",
+    "lastItemCount": 15
+  },
+  {
+    "id": "euractiv",
+    "name": "Euractiv Tech",
+    "domain": "euractiv.com",
+    "rssUrl": "https://www.euractiv.com/section/digital/feed/",
+    "layer": "Layer 1 - Pan-European",
+    "regions": [
+      "Pan-European"
+    ],
+    "country": "European Union (Brussels)",
+    "primaryCategory": "Policy & Ecosystem",
+    "credibilityRating": 9,
+    "enabled": true,
+    "languages": [
+      "en"
+    ],
+    "sourceRole": "EU technology policy, AI Act, and regulation",
+    "priority": "core",
+    "errorCount": 1,
+    "ingestionMethod": "RSS",
+    "lastError": "HTTP 403"
+  },
+  {
+    "id": "silicon-canals",
+    "name": "Silicon Canals",
+    "domain": "siliconcanals.com",
+    "rssUrl": "https://siliconcanals.com/feed/",
+    "layer": "Layer 1 - Pan-European",
+    "regions": [
+      "France & Benelux",
+      "UK & Ireland",
+      "Pan-European"
+    ],
+    "country": "Netherlands / Pan-EU",
+    "primaryCategory": "Climate & CleanTech",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "en"
+    ],
+    "sourceRole": "English-language supplement on European tech & funding",
+    "priority": "secondary",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:29.495Z",
+    "lastItemCount": 10
+  },
+  {
+    "id": "breakit-se",
+    "name": "Breakit",
+    "domain": "breakit.se",
+    "rssUrl": "https://www.breakit.se/feed",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "Nordics"
+    ],
+    "country": "Sweden",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 9,
+    "enabled": true,
+    "languages": [
+      "sv"
+    ],
+    "sourceRole": "Core local newsroom (Sweden)",
+    "priority": "core",
+    "errorCount": 1,
+    "ingestionMethod": "RSS",
+    "notes": "Premier Swedish startup and VC publication.",
+    "lastError": "HTTP 404"
+  },
+  {
+    "id": "di-digital-se",
+    "name": "DI Digital (Dagens Industri)",
+    "domain": "di.se",
+    "rssUrl": "https://www.di.se/digitala-affarer/rss",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "Nordics"
+    ],
+    "country": "Sweden",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 9,
+    "enabled": true,
+    "languages": [
+      "sv"
+    ],
+    "sourceRole": "Business/context newsroom (Sweden)",
+    "priority": "core",
+    "errorCount": 1,
+    "ingestionMethod": "RSS",
+    "lastError": "HTTP 404"
+  },
+  {
+    "id": "arctic-startup",
+    "name": "ArcticStartup",
+    "domain": "arcticstartup.com",
+    "rssUrl": "https://arcticstartup.com/feed/",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "Nordics",
+      "Central & Eastern Europe"
+    ],
+    "country": "Finland / Nordics",
+    "primaryCategory": "Policy & Ecosystem",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "en"
+    ],
+    "sourceRole": "Specialist/regional newsroom (Finland & Nordics)",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:30.783Z",
+    "lastItemCount": 10
+  },
+  {
+    "id": "shifter-no",
+    "name": "Shifter",
+    "domain": "shifter.no",
+    "rssUrl": "https://www.shifter.no/feed.xml",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "Nordics"
+    ],
+    "country": "Norway",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 9,
+    "enabled": true,
+    "languages": [
+      "no"
+    ],
+    "sourceRole": "Core local startup newsroom (Norway)",
+    "priority": "core",
+    "errorCount": 1,
+    "ingestionMethod": "RSS",
+    "lastError": "HTTP 404"
+  },
+  {
+    "id": "techsavvy-dk",
+    "name": "TechSavvy Media",
+    "domain": "techsavvy.media",
+    "rssUrl": "https://techsavvy.media/feed/",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "Nordics"
+    ],
+    "country": "Denmark",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "da"
+    ],
+    "sourceRole": "Specialist newsroom (Denmark)",
+    "priority": "secondary",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:31.393Z",
+    "lastItemCount": 10
+  },
+  {
+    "id": "geenius-ee",
+    "name": "Geenius",
+    "domain": "geenius.ee",
+    "rssUrl": "https://digi.geenius.ee/feed/",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "Nordics",
+      "Central & Eastern Europe"
+    ],
+    "country": "Estonia",
+    "primaryCategory": "AI & DeepTech",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "et"
+    ],
+    "sourceRole": "Specialist tech newsroom (Estonia)",
+    "priority": "secondary",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:30.771Z",
+    "lastItemCount": 0
+  },
+  {
+    "id": "labs-of-latvia",
+    "name": "Labs of Latvia",
+    "domain": "labsoflatvia.com",
+    "rssUrl": "https://labsoflatvia.com/en/feed",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "Nordics",
+      "Central & Eastern Europe"
+    ],
+    "country": "Latvia",
+    "primaryCategory": "Policy & Ecosystem",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "en",
+      "lv"
+    ],
+    "sourceRole": "Ecosystem/discovery source (Latvia)",
+    "priority": "secondary",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:30.798Z",
+    "lastItemCount": 0
+  },
+  {
+    "id": "gruenderszene-de",
+    "name": "Gründerszene",
+    "domain": "gruenderszene.de",
+    "rssUrl": "https://www.gruenderszene.de/feed",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "DACH (Germany, Austria, Switzerland)"
+    ],
+    "country": "Germany",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 9,
+    "enabled": true,
+    "languages": [
+      "de"
+    ],
+    "sourceRole": "Core startup newsroom (Germany)",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:32.156Z",
+    "lastItemCount": 20
+  },
+  {
+    "id": "deutsche-startups-de",
+    "name": "Deutsche Startups",
+    "domain": "deutsche-startups.de",
+    "rssUrl": "https://www.deutsche-startups.de/feed/",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "DACH (Germany, Austria, Switzerland)"
+    ],
+    "country": "Germany",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "de"
+    ],
+    "sourceRole": "Startup discovery & company developments (Germany)",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:30.606Z",
+    "lastItemCount": 15
+  },
+  {
+    "id": "t3n-de",
+    "name": "t3n",
+    "domain": "t3n.de",
+    "rssUrl": "https://t3n.de/rss.xml",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "DACH (Germany, Austria, Switzerland)"
+    ],
+    "country": "Germany",
+    "primaryCategory": "AI & DeepTech",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "de"
+    ],
+    "sourceRole": "Specialist newsroom (Germany)",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:32.197Z",
+    "lastItemCount": 20
+  },
+  {
+    "id": "trending-topics-at",
+    "name": "Trending Topics",
+    "domain": "trendingtopics.eu",
+    "rssUrl": "https://www.trendingtopics.eu/feed/",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "DACH (Germany, Austria, Switzerland)",
+      "Central & Eastern Europe"
+    ],
+    "country": "Austria",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 9,
+    "enabled": true,
+    "languages": [
+      "de"
+    ],
+    "sourceRole": "Core specialist/regional newsroom (Austria)",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:32.797Z",
+    "lastItemCount": 30
+  },
+  {
+    "id": "der-brutkasten-at",
+    "name": "Der Brutkasten",
+    "domain": "brutkasten.com",
+    "rssUrl": "https://brutkasten.com/feed",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "DACH (Germany, Austria, Switzerland)"
+    ],
+    "country": "Austria",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "de"
+    ],
+    "sourceRole": "Core local startup newsroom (Austria)",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:32.334Z",
+    "lastItemCount": 10
+  },
+  {
+    "id": "startupticker-ch",
+    "name": "Startupticker.ch",
+    "domain": "startupticker.ch",
+    "rssUrl": "https://www.startupticker.ch/en/rss/all",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "DACH (Germany, Austria, Switzerland)"
+    ],
+    "country": "Switzerland",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 9,
+    "enabled": true,
+    "languages": [
+      "en",
+      "de",
+      "fr"
+    ],
+    "sourceRole": "Core ecosystem source (Switzerland)",
+    "priority": "core",
+    "errorCount": 1,
+    "ingestionMethod": "RSS",
+    "lastError": "HTTP 404"
+  },
+  {
+    "id": "maddyness-fr",
+    "name": "Maddyness",
+    "domain": "maddyness.com",
+    "rssUrl": "https://www.maddyness.com/feed/",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "France & Benelux"
+    ],
+    "country": "France",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 9,
+    "enabled": true,
+    "languages": [
+      "fr"
+    ],
+    "sourceRole": "Core startup newsroom (France)",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:32.289Z",
+    "lastItemCount": 10
+  },
+  {
+    "id": "frenchweb-fr",
+    "name": "FrenchWeb",
+    "domain": "frenchweb.fr",
+    "rssUrl": "https://www.frenchweb.fr/feed",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "France & Benelux"
+    ],
+    "country": "France",
+    "primaryCategory": "SaaS & B2B",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "fr"
+    ],
+    "sourceRole": "Specialist newsroom (France)",
+    "priority": "secondary",
+    "errorCount": 1,
+    "ingestionMethod": "RSS",
+    "lastError": "HTTP 404"
+  },
+  {
+    "id": "mt-sprout-nl",
+    "name": "MT/Sprout",
+    "domain": "mtsprout.nl",
+    "rssUrl": "https://mtsprout.nl/feed",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "France & Benelux"
+    ],
+    "country": "Netherlands",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "nl"
+    ],
+    "sourceRole": "Core entrepreneurship source (Netherlands)",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:33.973Z",
+    "lastItemCount": 10
+  },
+  {
+    "id": "data-news-be",
+    "name": "Data News",
+    "domain": "datanews.levif.be",
+    "rssUrl": "https://datanews.levif.be/feed/",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "France & Benelux"
+    ],
+    "country": "Belgium",
+    "primaryCategory": "AI & DeepTech",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "fr",
+      "nl"
+    ],
+    "sourceRole": "Specialist newsroom (Belgium)",
+    "priority": "secondary",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:32.960Z",
+    "lastItemCount": 50
+  },
+  {
+    "id": "silicon-luxembourg",
+    "name": "Silicon Luxembourg",
+    "domain": "siliconluxembourg.lu",
+    "rssUrl": "https://www.siliconluxembourg.lu/feed/",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "France & Benelux"
+    ],
+    "country": "Luxembourg",
+    "primaryCategory": "Fintech & Banking",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "en",
+      "fr"
+    ],
+    "sourceRole": "Specialist/ecosystem source (Luxembourg)",
+    "priority": "secondary",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:34.113Z",
+    "lastItemCount": 10
+  },
+  {
+    "id": "startupitalia-it",
+    "name": "StartupItalia",
+    "domain": "startupitalia.eu",
+    "rssUrl": "https://startupitalia.eu/feed",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "Southern Europe"
+    ],
+    "country": "Italy",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "it"
+    ],
+    "sourceRole": "Core startup newsroom (Italy)",
+    "priority": "core",
+    "errorCount": 1,
+    "ingestionMethod": "RSS",
+    "lastError": "HTTP 403"
+  },
+  {
+    "id": "el-referente-es",
+    "name": "El Referente",
+    "domain": "elreferente.es",
+    "rssUrl": "https://elreferente.es/feed/",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "Southern Europe"
+    ],
+    "country": "Spain",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "es"
+    ],
+    "sourceRole": "Core startup discovery & news (Spain)",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:34.166Z",
+    "lastItemCount": 10
+  },
+  {
+    "id": "eco-pt",
+    "name": "ECO Economia Online",
+    "domain": "eco.sapo.pt",
+    "rssUrl": "https://eco.sapo.pt/feed/",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "Southern Europe"
+    ],
+    "country": "Portugal",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "pt"
+    ],
+    "sourceRole": "Business/context newsroom (Portugal)",
+    "priority": "secondary",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:34.148Z",
+    "lastItemCount": 22
+  },
+  {
+    "id": "startupper-gr",
+    "name": "Startupper",
+    "domain": "startupper.gr",
+    "rssUrl": "https://startupper.gr/feed/",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "Southern Europe"
+    ],
+    "country": "Greece",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "el"
+    ],
+    "sourceRole": "Core startup specialist (Greece)",
+    "priority": "secondary",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:35.130Z",
+    "lastItemCount": 10
+  },
+  {
+    "id": "mamstartup-pl",
+    "name": "MamStartup",
+    "domain": "mamstartup.pl",
+    "rssUrl": "https://mamstartup.pl/feed/",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "Central & Eastern Europe"
+    ],
+    "country": "Poland",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "pl"
+    ],
+    "sourceRole": "Core startup newsroom (Poland)",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:34.440Z",
+    "lastItemCount": 382
+  },
+  {
+    "id": "czechcrunch-cz",
+    "name": "CzechCrunch",
+    "domain": "cc.cz",
+    "rssUrl": "https://cc.cz/feed/",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "Central & Eastern Europe"
+    ],
+    "country": "Czechia",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 9,
+    "enabled": true,
+    "languages": [
+      "cs"
+    ],
+    "sourceRole": "Core startup/tech newsroom (Czechia)",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:34.451Z",
+    "lastItemCount": 10
+  },
+  {
+    "id": "startupcafe-ro",
+    "name": "StartupCafe",
+    "domain": "startupcafe.ro",
+    "rssUrl": "https://www.startupcafe.ro/feed",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "Central & Eastern Europe"
+    ],
+    "country": "Romania",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "ro"
+    ],
+    "sourceRole": "Core startup/business source (Romania)",
+    "priority": "secondary",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:34.223Z",
+    "lastItemCount": 10
+  },
+  {
+    "id": "ain-ua",
+    "name": "AIN",
+    "domain": "ain.ua",
+    "rssUrl": "https://ain.ua/feed/",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "Central & Eastern Europe"
+    ],
+    "country": "Ukraine",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 9,
+    "enabled": true,
+    "languages": [
+      "uk"
+    ],
+    "sourceRole": "Core tech/startup newsroom (Ukraine)",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:35.359Z",
+    "lastItemCount": 50
+  },
+  {
+    "id": "webrazzi-tr",
+    "name": "Webrazzi",
+    "domain": "webrazzi.com",
+    "rssUrl": "https://webrazzi.com/feed/",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "Southern Europe",
+      "Central & Eastern Europe"
+    ],
+    "country": "Turkey",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 9,
+    "enabled": true,
+    "languages": [
+      "tr"
+    ],
+    "sourceRole": "Core specialist startup newsroom (Turkey & Region)",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:35.378Z",
+    "lastItemCount": 20
+  },
+  {
+    "id": "verslo-zinios-lt",
+    "name": "Verslo žinios",
+    "domain": "vz.lt",
+    "rssUrl": "https://www.vz.lt/rss",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "Central & Eastern Europe"
+    ],
+    "country": "Lithuania",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 9,
+    "enabled": true,
+    "languages": [
+      "lt"
+    ],
+    "sourceRole": "Core business & tech newsroom (Lithuania)",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:35.447Z",
+    "lastItemCount": 50
+  },
+  {
+    "id": "munich-startup-de",
+    "name": "Munich Startup",
+    "domain": "munich-startup.de",
+    "rssUrl": "https://www.munich-startup.de/feed/",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "DACH (Germany, Austria, Switzerland)"
+    ],
+    "country": "Germany",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "de"
+    ],
+    "sourceRole": "Regional discovery source (Bavaria & Munich tech ecosystem)",
+    "priority": "secondary",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:35.307Z",
+    "lastItemCount": 20
+  },
+  {
+    "id": "netokracija-cee",
+    "name": "Netokracija",
+    "domain": "netokracija.com",
+    "rssUrl": "https://www.netokracija.com/feed",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "Central & Eastern Europe",
+      "Southern Europe"
+    ],
+    "country": "Central & Eastern Europe",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "hr",
+      "sr"
+    ],
+    "sourceRole": "Regional specialist newsroom (Balkans & Adriatic tech)",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:35.535Z",
+    "lastItemCount": 10
+  },
+  {
+    "id": "uktn-uk",
+    "name": "UKTN (UK Tech News)",
+    "domain": "uktech.news",
+    "rssUrl": "https://www.uktech.news/feed",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "UK & Ireland"
+    ],
+    "country": "United Kingdom",
+    "primaryCategory": "Funding & Deals",
+    "credibilityRating": 8,
+    "enabled": true,
+    "languages": [
+      "en"
+    ],
+    "sourceRole": "Specialist UK tech newsroom",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:35.243Z",
+    "lastItemCount": 10
+  },
+  {
+    "id": "silicon-republic-ie",
+    "name": "Silicon Republic",
+    "domain": "siliconrepublic.com",
+    "rssUrl": "https://www.siliconrepublic.com/feed",
+    "layer": "Layer 2 - Local",
+    "regions": [
+      "UK & Ireland"
+    ],
+    "country": "Ireland",
+    "primaryCategory": "AI & DeepTech",
+    "credibilityRating": 9,
+    "enabled": true,
+    "languages": [
+      "en"
+    ],
+    "sourceRole": "Core technology newsroom (Ireland)",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:35.464Z",
+    "lastItemCount": 20
+  },
+  {
+    "id": "eu-digital-strategy",
+    "name": "European Commission (Digital & AI)",
+    "domain": "digital-strategy.ec.europa.eu",
+    "rssUrl": "https://digital-strategy.ec.europa.eu/en/news/feed",
+    "layer": "Layer 3 - Primary & Data",
+    "regions": [
+      "Pan-European"
+    ],
+    "country": "European Union",
+    "primaryCategory": "Policy & Ecosystem",
+    "credibilityRating": 10,
+    "enabled": true,
+    "languages": [
+      "en"
+    ],
+    "sourceRole": "Primary source: Official EU digital and AI policy",
+    "priority": "core",
+    "errorCount": 0,
+    "ingestionMethod": "RSS",
+    "lastIngestedAt": "2026-10-28T16:42:35.303Z",
+    "lastItemCount": 0
+  },
+  {
+    "id": "eic-deeptech",
+    "name": "European Innovation Council",
+    "domain": "eic.ec.europa.eu",
+    "rssUrl": "https://eic.ec.europa.eu/news/feed_en",
+    "layer": "Layer 3 - Primary & Data",
+    "regions": [
+      "Pan-European"
+    ],
+    "country": "European Union",
+    "primaryCategory": "AI & DeepTech",
+    "credibilityRating": 10,
+    "enabled": true,
+    "languages": [
+      "en"
+    ],
+    "sourceRole": "Primary source: Deeptech funding & accelerator awards",
+    "priority": "core",
+    "errorCount": 1,
+    "ingestionMethod": "RSS",
+    "lastError": "HTTP 404"
+  }
+]

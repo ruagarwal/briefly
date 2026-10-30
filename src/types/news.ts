@@ -49,6 +49,24 @@ export interface NewsStory {
   corroborationNotes?: string;
   isBreaking?: boolean;
   reviewedBy?: string;
+  author?: string; // Journalist or writer byline if extracted from RSS/article
+  isGeneratedImage?: boolean; // True if image was synthesized/illustrative rather than original press photo
+  isMilestone?: boolean; // True if card is a 30-story milestone transition to the 72h archive
+  tier?: 'Tier 1 — Must know' | 'Tier 2 — Worth knowing' | 'Tier 3 — Emerging signals';
+  whyItMatters?: string; // Grounded explanation of business/tech consequence
+  whySelected?: string; // Grounded explanation of edition/diversity selection rationale
+  provenance?: 'original_reporting' | 'independently_corroborated' | 'primary_announcement' | 'ecosystem_listing' | 'developing_unverified';
+  dimensionScores?: {
+    economicImpact: number;
+    technologySignificance: number;
+    novelty: number;
+    ecosystemSignificance: number;
+    freshness: number;
+    evidenceConfidence: number;
+  };
+  eventType?: string;
+  extractedCountries?: string[];
+  rank?: number;
 }
 
 export type SourceLayer = 
@@ -85,6 +103,8 @@ export interface DailyEdition {
   stories: NewsStory[];
   geographicDistribution: Record<string, number>;
   averageImportance: number;
+  rankingMetrics?: any;
+  configVersion?: string;
 }
 
 export interface EditorialSettings {

@@ -1,0 +1,14 @@
+[
+  {
+    "runId": "run-1793205749335",
+    "timestamp": "2026-10-28T16:42:35.689Z",
+    "durationMs": 6354,
+    "sourcesProcessed": 41,
+    "rawArticlesFetched": 918,
+    "articlesAfterDedup": 64,
+    "articlesQualified": 25,
+    "publishedCount": 4,
+    "quarantinedCount": 21,
+    "errors": []
+  }
+]
