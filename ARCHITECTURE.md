@@ -486,5 +486,64 @@ Implements the authoritative specification (`european_tech_story_ranking_engine_
 - **Memory Footprint**: Full 72-hour candidate pool occupies $< 4\text{MB}$ of heap space.
 - **Cold-Start Impact**: Near zero ($< 10\text{ms}$ to load and parse state files into memory).
 
+---
+
+## 20. Serverless Execution Model & Synchronous Freshness Guarantee
+
+### A. Cloud Run Container Lifecycle & Scale-to-Zero Behavior
+* **Cloud Infrastructure Isolation**: The production and preview applications run on Google Cloud Run in `europe-west2` (London/Europe), completely independent of the operator's local development laptop, workstation, or browser session.
+* **The Scale-to-Zero Dilemma**: Serverless containers automatically suspend (freeze CPU allocation) when no incoming HTTP traffic is detected over an idle threshold. In earlier implementations, background cron intervals (`setInterval`) were frozen during late-night idle periods, resulting in stale feeds when visitors arrived the following morning.
+
+### B. Synchronous Freshness Evaluation Protocol
+To guarantee that neither the operator's laptop status nor nocturnal idle intervals can cause stale feeds:
+1. **Request-Driven Freshness Audit**: Upon receiving `GET /api/feed/today`, the server evaluates the timestamp distribution of published stories against the server's current UTC clock.
+2. **Synchronous Ingestion Trigger**: If fewer than 15 stories were published in the rolling 24-hour window, the server immediately triggers `await runIngestionPipeline()`.
+3. **Execution Before Response**: The HTTP response is held until fresh live RSS feeds from European outlets are parsed, filtered, ranked, and persisted to disk.
+4. **Guaranteed Freshness**: Midnight visitors and morning commute readers are guaranteed fresh news upon container wake-up without requiring any background processes to have run beforehand.
+5. **Edge & Client Shielding**: Client-side Stale-While-Revalidate (`useNewsFeed.ts`) immediately displays the local cached deck while awaiting the synchronous pipeline response, preventing blank screens or loading timeouts.
+
+---
+
+## 21. Multi-Lingual Generative Translation & Zero-Tolerance Untranslated Policy
+
+### A. Translation Engine & Model Selection
+* **Primary Model (`gemini-3.1-flash-lite`)**: Selected for high rate-limit resilience, sub-second latency, and fluent multi-lingual translation across European language families.
+* **Structured Output Schema**: Employs JSON schema enforcement (`responseMimeType: 'application/json'`) generating both headline and 60-word micro-briefs directly in natural, international English.
+
+### B. Algorithmic Multi-Lingual Detector
+The backend implements `isNonEnglishArticle(title, description, sourceLanguages)` evaluating:
+1. **Source Registry Metadata**: Feeds declaring non-English ISO-639 codes (e.g. `de`, `fr`, `sv`, `es`, `it`, `nl`, `uk`, `pl`, `cs`, `da`, `ro`, `el`).
+2. **Lexical Stop-Word Analysis**: High-frequency continental markers (German `der/die/das/und/für/mit`, French `dans/avec/pour/des/une/est`, Spanish `con/para/por/del/las`, Nordic `och/som/har/av/på/för`, CEE `oraz/przez/dla/jest`).
+3. **Non-Latin Script Detection**: Cyrillic (`\u0400-\u04FF`) and Greek (`\u0370-\u03FF`).
+
+### C. Zero-Tolerance Untranslated Policy
+1. **Consumer Feed Invariant**: The consumer reader feed (`GET /api/feed/today`) strictly rejects any card containing un-translated foreign language text.
+2. **Fallback Isolation**: If the generative translation API is temporarily unavailable or in cooldown:
+   - Stories from English sources (e.g., Tech.eu, Sifted, EU-Startups, Silicon Republic) are published via algorithmic synthesis.
+   - Stories from local-language European sources are never published in raw foreign form. Instead, they are routed to `status: 'quarantined'` with reason `Local-language reporting detected (<language>). Queued on Editorial Desk for English translation.`
+3. **One-Click Editorial Desk Translation**: Quarantined items feature a dedicated "Translate & Publish" action calling `POST /api/admin/translate-story` to translate and publish on demand via Gemini.
+
+---
+
+## 22. Operator Privacy Gate & Anonymous Telemetry Export
+
+### A. Shared Link Security & Surface Isolation
+* **The Problem**: Opening preview links on desktop previously displayed internal operator controls ("Editorial Desk" and "Native APK & iOS" modals) to external testers and public readers.
+* **The Privacy Gate**:
+  - By default, shared links (`ais-pre-...run.app`) hide all internal operator UI.
+  - Operator controls are unlocked only via explicit authorization:
+    1. URL query flag: `?desk=1`, `?admin=1`, or `?editor=1` (persisted to `localStorage.setItem('briefly_editor', 'true')`).
+    2. Secret Gesture: Tapping the top-left "B" logo 5 times in rapid succession.
+  - External visitors see only the clean, focused consumer news reader.
+
+### B. GDPR-Compliant Telemetry & RFC 4180 CSV Export
+* **Privacy By Default**: Telemetry collects zero PII, zero cookies, and zero IP addresses. Readers are represented by client-generated session UUIDs with coarse geographic country codes.
+* **CSV Export Endpoint (`GET /api/analytics/export`)**: Replaces data deletion with an RFC 4180 CSV download aggregating:
+  - Daily Active Users (DAU), total sessions, and unique readers.
+  - Average session duration and average stories read per session.
+  - Funnel conversion and milestone completion rates.
+  - Reader country distribution and client crash/error logs.
+  - Historical pipeline run durations and yield metrics.
+
 
 

@@ -1,5 +1,53 @@
 [
   {
+    "runId": "run-1793480385151",
+    "timestamp": "2026-10-31T20:59:53.841Z",
+    "durationMs": 8690,
+    "sourcesProcessed": 41,
+    "rawArticlesFetched": 963,
+    "articlesAfterDedup": 58,
+    "articlesQualified": 25,
+    "publishedCount": 25,
+    "quarantinedCount": 0,
+    "errors": []
+  },
+  {
+    "runId": "run-1793479745611",
+    "timestamp": "2026-10-31T20:49:12.102Z",
+    "durationMs": 6491,
+    "sourcesProcessed": 41,
+    "rawArticlesFetched": 948,
+    "articlesAfterDedup": 0,
+    "articlesQualified": 0,
+    "publishedCount": 0,
+    "quarantinedCount": 0,
+    "errors": []
+  },
+  {
+    "runId": "run-1793479471369",
+    "timestamp": "2026-10-31T20:44:36.809Z",
+    "durationMs": 5440,
+    "sourcesProcessed": 41,
+    "rawArticlesFetched": 963,
+    "articlesAfterDedup": 1,
+    "articlesQualified": 1,
+    "publishedCount": 0,
+    "quarantinedCount": 1,
+    "errors": []
+  },
+  {
+    "runId": "run-1793478994505",
+    "timestamp": "2026-10-31T20:38:43.484Z",
+    "durationMs": 128979,
+    "sourcesProcessed": 41,
+    "rawArticlesFetched": 948,
+    "articlesAfterDedup": 18,
+    "articlesQualified": 18,
+    "publishedCount": 2,
+    "quarantinedCount": 11,
+    "errors": []
+  },
+  {
     "runId": "run-1793389823624",
     "timestamp": "2026-10-30T19:50:29.764Z",
     "durationMs": 6140,

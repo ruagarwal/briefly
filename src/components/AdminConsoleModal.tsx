@@ -36,7 +36,8 @@ import {
   WifiOff,
   Timer,
   BarChart3,
-  Check
+  Check,
+  Download
 } from 'lucide-react';
 import type { 
   NewsStory, 
@@ -67,6 +68,7 @@ export const AdminConsoleModal: React.FC<AdminConsoleModalProps> = ({ onClose, o
   const [sourceSearchQuery, setSourceSearchQuery] = useState<string>('');
   const [cadenceInfo, setCadenceInfo] = useState<any>(null);
   const [restoringConfig, setRestoringConfig] = useState(false);
+  const [translatingStoryId, setTranslatingStoryId] = useState<string | null>(null);
 
   // Fetch data
   const fetchData = async () => {
@@ -199,16 +201,32 @@ export const AdminConsoleModal: React.FC<AdminConsoleModalProps> = ({ onClose, o
     }
   };
 
-  const handleResetAnalytics = async () => {
+  const handleExportCsv = () => {
+    // Direct browser download of telemetry CSV
+    window.location.href = '/api/analytics/export';
+  };
+
+  const handleTranslateStory = async (storyId: string) => {
     try {
-      const res = await fetch('/api/analytics/reset', { method: 'POST' });
+      setTranslatingStoryId(storyId);
+      const res = await fetch('/api/admin/translate-story', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ storyId })
+      });
       if (res.ok) {
-        setActionSuccess('Telemetry reset: Live metrics cleared to 0.');
-        fetchData();
-        setTimeout(() => setActionSuccess(null), 3000);
+        setActionSuccess('Story translated into fluent English & published.');
+        setQuarantinedStories(prev => prev.filter(s => s.id !== storyId));
+        onFeedUpdated();
+      } else {
+        const data = await res.json();
+        alert('Translation failed: ' + (data.error || 'Server error'));
       }
-    } catch (err) {
-      console.error('Reset analytics failed', err);
+    } catch (e: any) {
+      console.error('Translation error:', e);
+      alert('Translation network error: ' + e.message);
+    } finally {
+      setTranslatingStoryId(null);
     }
   };
 
@@ -331,12 +349,12 @@ export const AdminConsoleModal: React.FC<AdminConsoleModalProps> = ({ onClose, o
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0">
                   <button 
-                    onClick={handleResetAnalytics}
-                    className="p-1 rounded text-slate-400 hover:text-rose-300 shrink-0 flex items-center gap-1 text-[11px] bg-slate-900 hover:bg-slate-800 px-2 py-1 rounded-lg border border-slate-800 hover:border-rose-900/40 transition-all"
-                    title="Reset telemetry counters to 0"
+                    onClick={handleExportCsv}
+                    className="p-1 rounded text-blue-300 hover:text-white shrink-0 flex items-center gap-1.5 text-[11px] bg-blue-950/60 hover:bg-blue-900/80 px-2.5 py-1 rounded-lg border border-blue-800/80 transition-all font-medium"
+                    title="Download complete telemetry and engagement metrics as CSV"
                   >
-                    <RotateCcw className="w-3 h-3 text-rose-400" />
-                    <span>Clear Data</span>
+                    <Download className="w-3 h-3 text-blue-400" />
+                    <span>Export CSV</span>
                   </button>
                   <button 
                     onClick={fetchData}
@@ -784,6 +802,17 @@ export const AdminConsoleModal: React.FC<AdminConsoleModalProps> = ({ onClose, o
                             <FileEdit className="w-3.5 h-3.5" />
                             <span>Edit Summary</span>
                           </button>
+                          {story.quarantineReason?.toLowerCase().includes('local-language') && (
+                            <button
+                              onClick={() => handleTranslateStory(story.id)}
+                              disabled={translatingStoryId === story.id}
+                              className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium flex items-center gap-1.5 disabled:opacity-50"
+                              title="Translate foreign text to English and publish"
+                            >
+                              <Sparkles className="w-3.5 h-3.5" />
+                              <span>{translatingStoryId === story.id ? 'Translating...' : 'Translate & Publish'}</span>
+                            </button>
+                          )}
                           <button
                             onClick={() => handleEditorialAction(story.id, 'reject')}
                             className="px-3 py-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800/50 text-xs font-medium"

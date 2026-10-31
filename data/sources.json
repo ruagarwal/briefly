@@ -23,7 +23,7 @@
     "errorCount": 0,
     "ingestionMethod": "RSS",
     "notes": "Backed by FT. In-depth reporting on European scaleups and VC.",
-    "lastIngestedAt": "2026-10-30T19:50:23.793Z",
+    "lastIngestedAt": "2026-10-31T20:59:45.272Z",
     "lastItemCount": 24
   },
   {
@@ -49,7 +49,7 @@
     "errorCount": 0,
     "ingestionMethod": "RSS",
     "notes": "Comprehensive European deal tracking, funding, and M&A.",
-    "lastIngestedAt": "2026-10-30T19:50:23.839Z",
+    "lastIngestedAt": "2026-10-31T20:59:45.326Z",
     "lastItemCount": 20
   },
   {
@@ -73,7 +73,7 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:23.800Z",
+    "lastIngestedAt": "2026-10-31T20:59:45.281Z",
     "lastItemCount": 20
   },
   {
@@ -99,7 +99,7 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:24.955Z",
+    "lastIngestedAt": "2026-10-31T20:59:46.271Z",
     "lastItemCount": 10
   },
   {
@@ -123,7 +123,7 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:23.857Z",
+    "lastIngestedAt": "2026-10-31T20:59:45.339Z",
     "lastItemCount": 15
   },
   {
@@ -144,7 +144,7 @@
     ],
     "sourceRole": "EU technology policy, AI Act, and regulation",
     "priority": "core",
-    "errorCount": 3,
+    "errorCount": 7,
     "ingestionMethod": "RSS",
     "lastError": "HTTP 403"
   },
@@ -170,7 +170,7 @@
     "priority": "secondary",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:23.832Z",
+    "lastIngestedAt": "2026-10-31T20:59:45.320Z",
     "lastItemCount": 10
   },
   {
@@ -191,7 +191,7 @@
     ],
     "sourceRole": "Core local newsroom (Sweden)",
     "priority": "core",
-    "errorCount": 3,
+    "errorCount": 7,
     "ingestionMethod": "RSS",
     "notes": "Premier Swedish startup and VC publication.",
     "lastError": "HTTP 404"
@@ -214,7 +214,7 @@
     ],
     "sourceRole": "Business/context newsroom (Sweden)",
     "priority": "core",
-    "errorCount": 3,
+    "errorCount": 7,
     "ingestionMethod": "RSS",
     "lastError": "HTTP 404"
   },
@@ -239,7 +239,7 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:25.176Z",
+    "lastIngestedAt": "2026-10-31T20:59:50.085Z",
     "lastItemCount": 10
   },
   {
@@ -260,7 +260,7 @@
     ],
     "sourceRole": "Core local startup newsroom (Norway)",
     "priority": "core",
-    "errorCount": 3,
+    "errorCount": 7,
     "ingestionMethod": "RSS",
     "lastError": "HTTP 404"
   },
@@ -284,7 +284,7 @@
     "priority": "secondary",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:25.704Z",
+    "lastIngestedAt": "2026-10-31T20:59:47.072Z",
     "lastItemCount": 10
   },
   {
@@ -308,7 +308,7 @@
     "priority": "secondary",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:25.153Z",
+    "lastIngestedAt": "2026-10-31T20:59:46.449Z",
     "lastItemCount": 0
   },
   {
@@ -333,7 +333,7 @@
     "priority": "secondary",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:25.220Z",
+    "lastIngestedAt": "2026-10-31T20:59:46.533Z",
     "lastItemCount": 0
   },
   {
@@ -356,7 +356,7 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:26.274Z",
+    "lastIngestedAt": "2026-10-31T20:59:47.649Z",
     "lastItemCount": 20
   },
   {
@@ -379,7 +379,7 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:25.085Z",
+    "lastIngestedAt": "2026-10-31T20:59:46.418Z",
     "lastItemCount": 15
   },
   {
@@ -402,7 +402,7 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:26.348Z",
+    "lastIngestedAt": "2026-10-31T20:59:50.161Z",
     "lastItemCount": 20
   },
   {
@@ -426,7 +426,7 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:26.926Z",
+    "lastIngestedAt": "2026-10-31T20:59:50.904Z",
     "lastItemCount": 30
   },
   {
@@ -449,7 +449,7 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:26.443Z",
+    "lastIngestedAt": "2026-10-31T20:59:50.302Z",
     "lastItemCount": 10
   },
   {
@@ -472,7 +472,7 @@
     ],
     "sourceRole": "Core ecosystem source (Switzerland)",
     "priority": "core",
-    "errorCount": 3,
+    "errorCount": 7,
     "ingestionMethod": "RSS",
     "lastError": "HTTP 404"
   },
@@ -496,7 +496,7 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:26.360Z",
+    "lastIngestedAt": "2026-10-31T20:59:50.241Z",
     "lastItemCount": 10
   },
   {
@@ -519,7 +519,7 @@
     "priority": "secondary",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:27.111Z",
+    "lastIngestedAt": "2026-10-31T20:59:50.992Z",
     "lastItemCount": 30
   },
   {
@@ -542,7 +542,7 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:26.368Z",
+    "lastIngestedAt": "2026-10-31T20:59:51.697Z",
     "lastItemCount": 10
   },
   {
@@ -566,7 +566,7 @@
     "priority": "secondary",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:27.893Z",
+    "lastIngestedAt": "2026-10-31T20:59:51.547Z",
     "lastItemCount": 50
   },
   {
@@ -590,7 +590,7 @@
     "priority": "secondary",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:28.065Z",
+    "lastIngestedAt": "2026-10-31T20:59:51.856Z",
     "lastItemCount": 10
   },
   {
@@ -611,7 +611,7 @@
     ],
     "sourceRole": "Core startup newsroom (Italy)",
     "priority": "core",
-    "errorCount": 3,
+    "errorCount": 7,
     "ingestionMethod": "RSS",
     "lastError": "HTTP 403"
   },
@@ -635,7 +635,7 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:27.992Z",
+    "lastIngestedAt": "2026-10-31T20:59:51.765Z",
     "lastItemCount": 10
   },
   {
@@ -658,7 +658,7 @@
     "priority": "secondary",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:28.024Z",
+    "lastIngestedAt": "2026-10-31T20:59:51.820Z",
     "lastItemCount": 22
   },
   {
@@ -681,7 +681,7 @@
     "priority": "secondary",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:29.011Z",
+    "lastIngestedAt": "2026-10-31T20:59:52.895Z",
     "lastItemCount": 10
   },
   {
@@ -704,8 +704,8 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:28.319Z",
-    "lastItemCount": 403
+    "lastIngestedAt": "2026-10-31T20:59:52.073Z",
+    "lastItemCount": 397
   },
   {
     "id": "czechcrunch-cz",
@@ -727,7 +727,7 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:28.322Z",
+    "lastIngestedAt": "2026-10-31T20:59:52.150Z",
     "lastItemCount": 10
   },
   {
@@ -750,7 +750,7 @@
     "priority": "secondary",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:28.013Z",
+    "lastIngestedAt": "2026-10-31T20:59:51.845Z",
     "lastItemCount": 10
   },
   {
@@ -773,7 +773,7 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:29.271Z",
+    "lastIngestedAt": "2026-10-31T20:59:53.161Z",
     "lastItemCount": 50
   },
   {
@@ -797,7 +797,7 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:29.240Z",
+    "lastIngestedAt": "2026-10-31T20:59:53.100Z",
     "lastItemCount": 20
   },
   {
@@ -820,7 +820,7 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:29.254Z",
+    "lastIngestedAt": "2026-10-31T20:59:53.476Z",
     "lastItemCount": 50
   },
   {
@@ -843,7 +843,7 @@
     "priority": "secondary",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:29.168Z",
+    "lastIngestedAt": "2026-10-31T20:59:53.039Z",
     "lastItemCount": 20
   },
   {
@@ -868,8 +868,8 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:29.103Z",
-    "lastItemCount": 0
+    "lastIngestedAt": "2026-10-31T20:59:53.255Z",
+    "lastItemCount": 10
   },
   {
     "id": "uktn-uk",
@@ -891,7 +891,7 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:29.088Z",
+    "lastIngestedAt": "2026-10-31T20:59:52.975Z",
     "lastItemCount": 10
   },
   {
@@ -914,7 +914,7 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:29.427Z",
+    "lastIngestedAt": "2026-10-31T20:59:53.262Z",
     "lastItemCount": 20
   },
   {
@@ -937,7 +937,7 @@
     "priority": "core",
     "errorCount": 0,
     "ingestionMethod": "RSS",
-    "lastIngestedAt": "2026-10-30T19:50:29.101Z",
+    "lastIngestedAt": "2026-10-31T20:59:53.000Z",
     "lastItemCount": 0
   },
   {
@@ -958,7 +958,7 @@
     ],
     "sourceRole": "Primary source: Deeptech funding & accelerator awards",
     "priority": "core",
-    "errorCount": 3,
+    "errorCount": 7,
     "ingestionMethod": "RSS",
     "lastError": "HTTP 404"
   }

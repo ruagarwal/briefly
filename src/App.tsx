@@ -53,6 +53,27 @@ export default function App() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isLaunchGuideOpen, setIsLaunchGuideOpen] = useState(false);
 
+  // Editor mode: hidden on shared preview links unless ?admin=1, ?desk=1, ?editor=1 or previously unlocked
+  const [isEditor, setIsEditor] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    const params = new URLSearchParams(window.location.search);
+    const hasParam = params.has('admin') || params.has('desk') || params.has('editor');
+    const hasStorage = localStorage.getItem('briefly_editor') === 'true';
+    if (hasParam) {
+      localStorage.setItem('briefly_editor', 'true');
+      return true;
+    }
+    return hasStorage;
+  });
+
+  const toggleEditorMode = () => {
+    setIsEditor(prev => {
+      const next = !prev;
+      localStorage.setItem('briefly_editor', next ? 'true' : 'false');
+      return next;
+    });
+  };
+
   return (
     <DeviceSimulatorFrame
       savedCount={bookmarkedIds.length}
@@ -61,6 +82,8 @@ export default function App() {
       onOpenLaunchGuide={() => setIsLaunchGuideOpen(true)}
       onRefresh={refreshFeed}
       isRefreshing={loading}
+      isEditor={isEditor}
+      onToggleEditor={toggleEditorMode}
     >
       {loading && !edition ? (
         <div className="flex flex-col items-center justify-center h-full w-full bg-slate-950 text-slate-400 gap-3 p-6 text-center">
@@ -126,7 +149,7 @@ export default function App() {
       )}
 
       {/* Editorial Admin Desk Modal */}
-      {isAdminOpen && (
+      {isAdminOpen && isEditor && (
         <AdminConsoleModal
           onClose={() => setIsAdminOpen(false)}
           onFeedUpdated={refreshFeed}
@@ -134,7 +157,7 @@ export default function App() {
       )}
 
       {/* App Store & Google Play Launch Guide */}
-      {isLaunchGuideOpen && (
+      {isLaunchGuideOpen && isEditor && (
         <StoreLaunchGuideModal
           onClose={() => setIsLaunchGuideOpen(false)}
         />

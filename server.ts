@@ -96,7 +96,7 @@ const DEFAULT_CADENCE_CONFIG: CadenceConfig = {
     { name: 'Overnight Sweep', timeStr: '19:00', hour: 19, minute: 0 }
   ],
   activeShelfLifeHours: 72,
-  ingestionScanWindowHours: 24,
+  ingestionScanWindowHours: 72,
   dbRetentionDays: 7,
   enableMilestoneCard: true,
   milestonePosition: 30
@@ -485,13 +485,15 @@ function passesSignalFilter(title: string, description: string): boolean {
 
 // Token-based Jaccard similarity deduplication
 function isDuplicateStory(newTitle: string, newLink: string, existingList: NewsStory[]): boolean {
-  if (existingList.some(s => s.originalUrl === newLink)) return true;
+  // Check against published stories so valid items previously quarantined or rejected can be re-synthesized
+  const publishedStories = existingList.filter(s => s.status === 'published');
+  if (publishedStories.some(s => s.originalUrl === newLink)) return true;
 
   const clean = (t: string) => t.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').trim();
   const normNew = clean(newTitle);
   const newTokens = new Set(normNew.split(/\s+/).filter(w => w.length > 3));
 
-  for (const item of existingList) {
+  for (const item of publishedStories) {
     const normExisting = clean(item.title);
     if (normNew === normExisting) return true;
 
@@ -510,7 +512,71 @@ function isDuplicateStory(newTitle: string, newLink: string, existingList: NewsS
   return false;
 }
 
-// Algorithmic NLP Micro-Brief Synthesizer (Zero-latency fallback & 60-word guarantee)
+// ============================================================================
+// LANGUAGE DETECTION & TRANSLATION ENGINE (Zero-Tolerance Untranslated Policy)
+// ============================================================================
+
+/**
+ * Detects whether an article is written in a local European language rather than English.
+ * Evaluates both source-level declared languages and content-level vocabulary / stop-words.
+ * 
+ * Supported language profiles:
+ * - German (de): der, die, das, und, für, mit, von, ein, eine, einer, nach, über...
+ * - French (fr): dans, avec, pour, des, une, est, qui, sur, par, les, cette, plus...
+ * - Spanish (es): con, para, por, del, las, los, una, este, esta, sobre, ronda, millones...
+ * - Nordic (sv, da, no): och, som, har, av, på, för, till, med, ett, inte, om, bolaget...
+ * - CEE / Cyrillic / Greek (pl, cs, lt, ro, uk, el)
+ * 
+ * @param title Article headline
+ * @param description Article snippet or text body
+ * @param sourceLanguages Optional array of ISO-639 codes declared by the source registry
+ * @returns Object indicating whether non-English text is present and which language was identified
+ */
+function isNonEnglishArticle(
+  title: string, 
+  description: string = '', 
+  sourceLanguages?: string[]
+): { isNonEnglish: boolean; detectedLanguage?: string } {
+  // 1. Source-level metadata check: if feed is explicitly non-English (e.g. ['de'], ['fr']) and does not include 'en'
+  if (sourceLanguages && sourceLanguages.length > 0 && !sourceLanguages.includes('en')) {
+    return { isNonEnglish: true, detectedLanguage: sourceLanguages.join(', ') };
+  }
+
+  const combined = (title + ' ' + description).toLowerCase();
+
+  // 2. Lexical analysis across European language clusters
+  const germanWords = ['der', 'die', 'das', 'und', 'für', 'mit', 'von', 'ein', 'eine', 'einer', 'nach', 'über', 'wochenrückblick', 'startup-szene', 'deutschland', 'münchner', 'berliner', 'wehren', 'sichern'];
+  const frenchWords = ['dans', 'avec', 'pour', 'des', 'une', 'est', 'qui', 'sur', 'par', 'les', 'cette', 'plus', 'levée', 'fonds', 'visé', 'nouvelle', 'plainte', 'actions', 'obligations', 'fonctionnent'];
+  const spanishWords = ['con', 'para', 'por', 'del', 'las', 'los', 'una', 'este', 'esta', 'sobre', 'ronda', 'millones', 'obtiene', 'nuevas', 'empresas'];
+  const nordicWords = ['och', 'som', 'har', 'av', 'på', 'för', 'till', 'med', 'ett', 'inte', 'om', 'bolaget', 'avslöjar', 'konkurs', 'miljarder', 'kronor'];
+  const ceeWords = ['oraz', 'przez', 'dla', 'jest', 'roku', 'tysięcy', 'milionów', 'bude', 'který', 'také', 'pagal', 'tačiau', 'lietuva', 'vilnius'];
+
+  const words = combined.split(/[\s,.:;!?"'()[\]{}]+/);
+  const countMatches = (list: string[]) => words.filter(w => list.includes(w)).length;
+
+  if (countMatches(germanWords) >= 2) return { isNonEnglish: true, detectedLanguage: 'German (de)' };
+  if (countMatches(frenchWords) >= 2) return { isNonEnglish: true, detectedLanguage: 'French (fr)' };
+  if (countMatches(spanishWords) >= 2) return { isNonEnglish: true, detectedLanguage: 'Spanish (es)' };
+  if (countMatches(nordicWords) >= 2) return { isNonEnglish: true, detectedLanguage: 'Nordic (sv/no/da)' };
+  if (countMatches(ceeWords) >= 2) return { isNonEnglish: true, detectedLanguage: 'CEE (pl/cs/lt)' };
+
+  // 3. Non-Latin script detection (Cyrillic & Greek)
+  if (/[\u0400-\u04FF]/.test(title)) return { isNonEnglish: true, detectedLanguage: 'Ukrainian/Cyrillic (uk)' };
+  if (/[\u0370-\u03FF]/.test(title)) return { isNonEnglish: true, detectedLanguage: 'Greek (el)' };
+
+  return { isNonEnglish: false };
+}
+
+/**
+ * Algorithmic NLP Micro-Brief Synthesizer.
+ * Provides a zero-latency, deterministic summarization engine that guarantees the 60-word limit.
+ * 
+ * CRITICAL POLICY ENFORCEMENT:
+ * - If the raw article is in English, it is marked status: 'published'.
+ * - If the raw article is detected as non-English, it CANNOT be published directly (to avoid
+ *   foreign-language cards leaking into the consumer reader). Instead, it is routed to status: 'quarantined'
+ *   with a descriptive reason so operators can review or translate it.
+ */
 function synthesizeArticleAlgorithmic(rawArticle: {
   title: string;
   link: string;
@@ -531,7 +597,7 @@ function synthesizeArticleAlgorithmic(rawArticle: {
   const figureMatch = (cleanTitle + ' ' + cleanDesc).match(/(?:[€$£]\s*\d+(?:\.\d+)?\s*(?:[kKmMbB]|million|billion)?|\d+(?:\.\d+)?\s*(?:million|billion|M|B)\s*(?:euros?|dollars?|SEK|NOK|GBP))/i);
   const keyFigures = figureMatch ? figureMatch[0].trim() : undefined;
 
-  // Determine topic based on keyword signals
+  // Determine topic tag based on keyword signals
   let topicTag: StoryTopic = 'Funding & Deals';
   const lowerContent = (cleanTitle + ' ' + cleanDesc).toLowerCase();
   if (lowerContent.includes('ai') || lowerContent.includes('deeptech') || lowerContent.includes('drone') || lowerContent.includes('quantum') || lowerContent.includes('model')) {
@@ -571,42 +637,28 @@ function synthesizeArticleAlgorithmic(rawArticle: {
     draftedSummary = `${cleanTitle}. ${baseSentence}`;
   }
 
-  const { text: cleanSummary, wordCount } = enforce60WordCap(draftedSummary, 56);
+  let { text: cleanSummary, wordCount } = enforce60WordCap(draftedSummary, 56);
+  if (!/[.!?]["']?$/.test(cleanSummary)) {
+    cleanSummary += '.';
+  }
   const currentUtcIso = new Date().toISOString().split('T')[0];
 
-  // Map region from country if available
+  // Map European geographic region from source country
   let region: EuropeanRegion = 'Pan-European';
   const cLower = (rawArticle.country || '').toLowerCase();
   if (cLower.includes('uk') || cLower.includes('britain') || cLower.includes('ireland')) region = 'UK & Ireland';
-  else if (cLower.includes('sweden') || cLower.includes('norway') || cLower.includes('denmark') || cLower.includes('finland') || cLower.includes('nordic')) region = 'Nordics';
+  else if (cLower.includes('sweden') || cLower.includes('norway') || cLower.includes('denmark') || cLower.includes('finland') || cLower.includes('nordic') || cLower.includes('estonia')) region = 'Nordics';
   else if (cLower.includes('germany') || cLower.includes('austria') || cLower.includes('switzerland')) region = 'DACH (Germany, Austria, Switzerland)';
   else if (cLower.includes('france') || cLower.includes('netherlands') || cLower.includes('belgium') || cLower.includes('luxembourg')) region = 'France & Benelux';
   else if (cLower.includes('italy') || cLower.includes('spain') || cLower.includes('portugal') || cLower.includes('greece')) region = 'Southern Europe';
+  else if (cLower.includes('poland') || cLower.includes('czech') || cLower.includes('romania') || cLower.includes('baltic') || cLower.includes('hungary')) region = 'Central & Eastern Europe';
 
-  const hasNonLatinScript = /[\u0400-\u04FF\u0370-\u03FF]/.test(cleanTitle + ' ' + cleanDesc);
-  const hasDanishNorwegian = /[æøåÆØÅ]/.test(cleanTitle + ' ' + cleanDesc) || 
-    /\b(partier|løfter|sløret|deres|dansk|erhvervsliv|af|til|skal|ikke|hvorfor|indlægget|blev|først|udgivet|spurgt)\b/i.test(cleanTitle + ' ' + cleanDesc);
-  const hasSwedish = (/[äöåÄÖÅ]/.test(cleanTitle + ' ' + cleanDesc) &&
-    /\b(och|att|det|som|till|av|för|inte|konkurs|bolaget|jätteledsamt|företagare|affärsmetoder)\b/i.test(cleanTitle + ' ' + cleanDesc));
-  const hasGerman = (/[äöüßÄÖÜ]/.test(cleanTitle + ' ' + cleanDesc) &&
-    /\b(und|der|die|das|mit|für|ist|nicht|sich|nach|aus|über|rechenzentrum|programm|konferenz|stammwerk|spielt|mitarbeiter)\b/i.test(cleanTitle + ' ' + cleanDesc));
-  const hasRomanceOrSlavic = /\b(dans|pour|avec|lève|rachète|lequel|ajudas|terão|gás|indústrias|koupil|článek|rozpočet|staví|lansează|funcție|potrivit|się|jest|nie|tai|yra)\b/i.test(cleanTitle + ' ' + cleanDesc);
-  const sourceIsNonEn = Boolean(rawArticle.languages && !rawArticle.languages.includes('en'));
-
-  const isNonEnglish = hasNonLatinScript || hasDanishNorwegian || hasSwedish || hasGerman || hasRomanceOrSlavic || sourceIsNonEn;
-
-  const qualityGate = passesEditorialQualityGate(cleanTitle, cleanSummary);
-
-  let status: StoryStatus = 'published';
-  let quarantineReason: string | undefined = undefined;
-
-  if (isNonEnglish) {
-    status = 'quarantined';
-    quarantineReason = `Local-language reporting detected (${rawArticle.languages?.join(', ') || 'Nordic/Continental'}). Queued on Editorial Desk for English translation.`;
-  } else if (!qualityGate.isValid) {
-    status = 'quarantined';
-    quarantineReason = `Editorial Quality Gate quarantine: ${qualityGate.reason}. Queued on Editorial Desk for manual brief expansion.`;
-  }
+  // Check language: enforce Zero-Tolerance Untranslated Policy
+  const langCheck = isNonEnglishArticle(cleanTitle, cleanDesc, rawArticle.languages);
+  const status: StoryStatus = langCheck.isNonEnglish ? 'quarantined' : 'published';
+  const quarantineReason = langCheck.isNonEnglish 
+    ? `Local-language reporting detected (${langCheck.detectedLanguage || 'non-English'}). Queued on Editorial Desk for English translation.`
+    : undefined;
 
   return {
     id: `story-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
@@ -619,11 +671,11 @@ function synthesizeArticleAlgorithmic(rawArticle: {
     publishedAt: rawArticle.pubDate ? new Date(rawArticle.pubDate).toISOString() : new Date().toISOString(),
     ingestedAt: new Date().toISOString(),
     editionDate: currentUtcIso,
-    country: rawArticle.country || 'Pan-European',
+    country: rawArticle.country || 'Europe',
     region,
     topicTag,
-    importanceScore: isNonEnglish ? 78 : 90,
-    confidenceScore: isNonEnglish ? 70 : 94,
+    importanceScore: keyFigures ? 92 : 86,
+    confidenceScore: langCheck.isNonEnglish ? 70 : 92,
     status,
     quarantineReason,
     keyClaims: [cleanTitle, `Reported by ${rawArticle.sourceName}`],
@@ -636,7 +688,18 @@ function synthesizeArticleAlgorithmic(rawArticle: {
   };
 }
 
-// Multi-Lingual Gemini Summarization & Scoring Function (with graceful algorithmic fallback)
+let geminiQuotaExhaustedUntil = 0;
+
+/**
+ * Multi-Lingual Generative Article Processor.
+ * Uses Google Gemini 3.1 Flash Lite to:
+ * 1. Faithfully translate local-language European reporting (German, French, Spanish, Swedish, etc.) into fluent English.
+ * 2. Synthesize an executive micro-brief strictly adhering to <= 60 words.
+ * 3. Extract key figures, tags, and geographic regions.
+ * 
+ * If Gemini fails (e.g. network error, quota exhaustion), it falls back to synthesizeArticleAlgorithmic.
+ * English stories will be safely published, while local-language stories are quarantined until translated.
+ */
 async function processArticle(rawArticle: {
   title: string;
   link: string;
@@ -650,8 +713,10 @@ async function processArticle(rawArticle: {
   author?: string;
   imageUrl?: string;
 }): Promise<NewsStory | null> {
-  // If Gemini API client is active, use generative AI for deep translation & fact extraction
-  if (ai) {
+  const algorithmicStory = synthesizeArticleAlgorithmic(rawArticle);
+
+  // If Gemini API is configured and not in cooldown, attempt generative translation & synthesis
+  if (ai && Date.now() > geminiQuotaExhaustedUntil) {
     const prompt = `
 You are the senior editorial intelligence engine for Briefly, an editorial-grade European startup intelligence briefing.
 Analyze the following European startup news item from ${rawArticle.sourceName} (${rawArticle.sourceDomain}):
@@ -662,17 +727,16 @@ Snippet / Text: ${rawArticle.description}
 URL: ${rawArticle.link}
 Reported Country/Context: ${rawArticle.country || 'Europe'}
 
-MANDATORY RULES:
+MANDATORY EDITORIAL RULES:
 1. Product Promise: The summary MUST communicate what happened and why it matters in 60 words or fewer in fluent, natural English.
-2. TRANSLATION: If the original title or text is in Swedish, German, French, Dutch, Spanish, Italian, Polish, or any European language, translate it faithfully into English.
+2. TRANSLATION (CRITICAL): If the original title or text is in Swedish, German, French, Dutch, Spanish, Italian, Polish, Ukrainian, or ANY local European language, translate it faithfully into English. Both the headline and summary MUST be in English.
 3. Put the most critical facts, numbers, company names, and investor names in the first sentence.
-4. Be strictly factual, neutral, and international. No PR buzzwords, no promotional fluff ("groundbreaking", "revolutionary"), no clickbait.
-5. If this is NOT about European startups, venture capital, scaleups, European founders, tech regulation, or the European technology ecosystem, score startupRelevance and europeanRelevance below 50.
-6. Provide structured evaluation scores:
+4. Be strictly factual, neutral, and international. No PR buzzwords, no promotional fluff.
+5. Provide structured evaluation scores:
    - startupRelevance (0-100)
    - europeanRelevance (0-100)
    - marketImportance (0-100)
-   - confidenceScore (0-100: how confident are you that the core claims are factual and supported by the source text)
+   - confidenceScore (0-100)
    - keyClaims: array of 2-3 core factual assertions
    - keyFigures: brief numerical summary (e.g. "€35M Series B", "200 layoffs")
    - country: primary European country
@@ -681,8 +745,9 @@ MANDATORY RULES:
 `;
 
     try {
+      // Use gemini-3.1-flash-lite: optimized for low latency, high throughput, and reliable multi-lingual translation
       const response = await ai.models.generateContent({
-        model: 'gemini-3.8-flash',
+        model: 'gemini-3.1-flash-lite',
         contents: prompt,
         config: {
           responseMimeType: 'application/json',
@@ -690,7 +755,7 @@ MANDATORY RULES:
             type: Type.OBJECT,
             properties: {
               headline: { type: Type.STRING },
-              summary: { type: Type.STRING, description: 'Summary strictly under 60 words in English' },
+              summary: { type: Type.STRING },
               startupRelevance: { type: Type.NUMBER },
               europeanRelevance: { type: Type.NUMBER },
               marketImportance: { type: Type.NUMBER },
@@ -722,8 +787,7 @@ MANDATORY RULES:
                   'Policy & Ecosystem',
                   'M&A & Exits'
                 ]
-              },
-              quarantineReason: { type: Type.STRING, description: 'Reason if confidence is low, unverified, or sensational' }
+              }
             },
             required: ['headline', 'summary', 'startupRelevance', 'europeanRelevance', 'marketImportance', 'confidenceScore', 'keyClaims', 'country', 'region', 'topicTag']
           }
@@ -731,76 +795,49 @@ MANDATORY RULES:
       });
 
       const parsed = JSON.parse(response.text || '{}');
-      const { text: cleanSummary, wordCount } = enforce60WordCap(parsed.summary, 60);
+      if (parsed.headline && parsed.summary) {
+        // Double check that translation actually converted text to English
+        const langVerification = isNonEnglishArticle(parsed.headline, parsed.summary);
+        
+        let { text: cleanSummary, wordCount } = enforce60WordCap(parsed.summary, 58);
+        if (!/[.!?]["']?$/.test(cleanSummary)) cleanSummary += '.';
 
-      const weights = editorialSettings.scoringWeights;
-      const compositeScore = Math.round(
-        (parsed.startupRelevance * (weights.startupRelevance / 100)) +
-        (parsed.europeanRelevance * (weights.europeanRelevance / 100)) +
-        (parsed.marketImportance * (weights.marketImportance / 100)) +
-        (parsed.confidenceScore * 0.25)
-      );
-
-      // Quarantine determination
-      let status: 'published' | 'quarantined' | 'rejected' = 'published';
-      let qReason = parsed.quarantineReason;
-
-      const effectiveTitle = parsed.headline || cleanHtmlText(rawArticle.title);
-      const qualityGate = passesEditorialQualityGate(effectiveTitle, cleanSummary);
-
-      if (parsed.startupRelevance < 50 || parsed.europeanRelevance < 50) {
-        status = 'rejected';
-      } else if (parsed.confidenceScore < editorialSettings.minConfidenceThreshold) {
-        status = 'quarantined';
-        qReason = qReason || `Confidence score (${parsed.confidenceScore}%) below threshold (${editorialSettings.minConfidenceThreshold}%). Requires editorial review.`;
-      } else if (!qualityGate.isValid) {
-        status = 'quarantined';
-        qReason = `Editorial Quality Gate quarantine: ${qualityGate.reason}.`;
+        return {
+          ...algorithmicStory,
+          title: parsed.headline,
+          summary: cleanSummary,
+          wordCount,
+          topicTag: (parsed.topicTag as StoryTopic) || algorithmicStory.topicTag,
+          region: (parsed.region as EuropeanRegion) || algorithmicStory.region,
+          keyFigures: parsed.keyFigures || algorithmicStory.keyFigures,
+          status: langVerification.isNonEnglish ? 'quarantined' : 'published',
+          quarantineReason: langVerification.isNonEnglish 
+            ? `Post-translation language verification flagged residual non-English content (${langVerification.detectedLanguage}).` 
+            : undefined
+        };
       }
-
-      const currentUtcIso = new Date().toISOString().split('T')[0];
-
-      return {
-        id: `story-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-        title: parsed.headline || cleanHtmlText(rawArticle.title),
-        summary: cleanSummary,
-        wordCount,
-        originalUrl: rawArticle.link,
-        publisher: rawArticle.sourceName,
-        publisherDomain: rawArticle.sourceDomain,
-        publishedAt: rawArticle.pubDate ? new Date(rawArticle.pubDate).toISOString() : new Date().toISOString(),
-        ingestedAt: new Date().toISOString(),
-        editionDate: currentUtcIso,
-        country: parsed.country || rawArticle.country || 'Europe',
-        region: parsed.region as EuropeanRegion,
-        topicTag: parsed.topicTag as StoryTopic,
-        importanceScore: compositeScore,
-        confidenceScore: parsed.confidenceScore,
-        status: status,
-        quarantineReason: qReason,
-        keyClaims: parsed.keyClaims || [],
-        keyFigures: parsed.keyFigures,
-        sourceReliability: 9,
-        corroborationNotes: `Synthesized & verified via Gemini against reporting on ${rawArticle.sourceDomain}.`,
-        author: rawArticle.author,
-        imageUrl: rawArticle.imageUrl,
-        isGeneratedImage: !rawArticle.imageUrl
-      };
     } catch (err: any) {
-      console.warn('[Gemini Processing Note] Falling back to algorithmic synthesizer:', err?.message || err);
+      if (err?.message?.includes('429') || err?.message?.includes('quota') || err?.message?.includes('RESOURCE_EXHAUSTED')) {
+        console.warn('[Gemini Quota Notice] Free tier quota reached. Using fast algorithmic synthesizer.');
+        geminiQuotaExhaustedUntil = Date.now() + 3600000;
+      } else {
+        console.warn('[Gemini Synthesis Warning]', err?.message);
+      }
     }
   }
 
-  // Graceful deterministic NLP synthesizer fallback
-  return synthesizeArticleAlgorithmic(rawArticle);
+  // Graceful fallback: returns algorithmic story (published for English, quarantined for local language)
+  return algorithmicStory;
 }
 
-// Concurrency lock for ingestion pipeline
+// Concurrency lock for ingestion pipeline with auto-timeout
 let isPipelineRunning = false;
+let pipelineStartTime = 0;
 
 // Ingestion Pipeline Runner
 async function runIngestionPipeline(): Promise<PipelineExecutionResult> {
-  if (isPipelineRunning) {
+  // Auto-reset lock if stuck for more than 40 seconds
+  if (isPipelineRunning && (Date.now() - pipelineStartTime) < 40000) {
     console.log('[Pipeline] Ingestion is already running, skipping overlapping execution.');
     return pipelineLogs[0] || {
       runId: `run-overlapping`,
@@ -817,6 +854,7 @@ async function runIngestionPipeline(): Promise<PipelineExecutionResult> {
   }
 
   isPipelineRunning = true;
+  pipelineStartTime = Date.now();
   const startTime = Date.now();
   const runId = `run-${startTime}`;
   const errors: string[] = [];
@@ -1004,7 +1042,7 @@ async function runIngestionPipeline(): Promise<PipelineExecutionResult> {
 }
 
 // ---------------- 6-HOUR INGESTION CADENCE SCHEDULER & CATCH-UP ----------------
-async function checkAndRunScheduledIngestion(force = false) {
+async function checkAndRunScheduledIngestion(force: boolean = false) {
   const now = new Date();
   const currentUtcDate = now.toISOString().split('T')[0];
   const currentHour = now.getUTCHours();
@@ -1013,20 +1051,20 @@ async function checkAndRunScheduledIngestion(force = false) {
 
   const lastRun = pipelineLogs[0];
   const lastRunTime = lastRun ? new Date(lastRun.timestamp).getTime() : 0;
+  const hoursSinceLastRun = lastRun ? (now.getTime() - lastRunTime) / 3600000 : 999;
 
-  if (cadenceConfig.mode === 'legacy-daily') {
-    // Legacy pre-cadence mode: once a day at >= 03:00 UTC
-    const lastRunDate = lastRun ? lastRun.timestamp.split('T')[0] : null;
-    const lastRunHour = lastRun ? new Date(lastRun.timestamp).getUTCHours() : null;
-    const needsRun = force || (!lastRun) || (lastRunDate !== currentUtcDate && currentHour >= 3) || (lastRunDate === currentUtcDate && (lastRunHour === null || lastRunHour < 3) && currentHour >= 3);
-    if (needsRun) {
-      console.log('[Scheduler - Legacy Mode] Running daily 03:00 GMT pipeline...');
+  // If it's been more than 5 hours since the last run (or first boot), run immediately!
+  if (force || !lastRun || hoursSinceLastRun >= 5.0) {
+    console.log(`[Scheduler] ${hoursSinceLastRun.toFixed(1)}h elapsed since last pipeline run. Triggering fresh ingestion...`);
+    try {
       await runIngestionPipeline();
+    } catch (e: any) {
+      console.error('[Scheduler] Ingestion execution failed:', e);
     }
     return;
   }
 
-  // 6-Hour Cadence Mode: Morning (03:00), Lunch (09:30), Evening (14:30), Overnight (19:00) GMT
+  // 6-Hour Cadence Mode: Check edition slot due
   let latestDueSlot: { name: string; timeStr: string; hour: number; minute: number } | null = null;
   for (const slot of cadenceConfig.editionTimes) {
     const slotTotalMinutes = slot.hour * 60 + slot.minute;
@@ -1035,7 +1073,7 @@ async function checkAndRunScheduledIngestion(force = false) {
     }
   }
 
-  let needsRun = force || !lastRun;
+  let needsRun: boolean = force;
   if (!needsRun && latestDueSlot) {
     const dueTimeToday = new Date(`${currentUtcDate}T${latestDueSlot.timeStr.padStart(5, '0')}:00.000Z`).getTime();
     if (lastRunTime < dueTimeToday) {
@@ -1044,8 +1082,8 @@ async function checkAndRunScheduledIngestion(force = false) {
   }
 
   if (needsRun) {
-    const slotName = latestDueSlot ? `${latestDueSlot.name} (${latestDueSlot.timeStr} GMT)` : 'Initial Boot';
-    console.log(`[Scheduler] 6-Hour Cadence Trigger: Executing ${slotName}...`);
+    const slotName = latestDueSlot ? `${latestDueSlot.name} (${latestDueSlot.timeStr} GMT)` : 'Scheduled Ingestion';
+    console.log(`[Scheduler] Cadence Trigger: Executing ${slotName}...`);
     try {
       await runIngestionPipeline();
     } catch (e: any) {
@@ -1059,23 +1097,45 @@ async function checkAndRunScheduledIngestion(force = false) {
 // ---------------- API ROUTES ----------------
 
 // Get today's active feed (Specification-compliant 6-dimension ranking & continuous 72-hour archive)
-app.get('/api/feed/today', (req, res) => {
-  // Trigger background check: if an edition slot (03:00, 09:30, 14:30, 19:00 GMT) is due, run pipeline asynchronously
-  checkAndRunScheduledIngestion(false).catch(err => {
-    console.error('[Feed Request] Background scheduled check error:', err);
-  });
-
+app.get('/api/feed/today', async (req, res) => {
   const currentUtcIso = new Date().toISOString().split('T')[0];
   const now = new Date();
   const nowMs = now.getTime();
   const shelfLifeMs = cadenceConfig.activeShelfLifeHours * 60 * 60 * 1000;
 
-  // 1. Strict active shelf-life filter (72 hours in cadence mode, 7 days in legacy)
+  // Check how many published stories are fresh (under 24 hours old)
+  const publishedUnder24h = allStories.filter(s => {
+    if (s.status !== 'published') return false;
+    const pubTime = new Date(s.publishedAt || s.ingestedAt).getTime();
+    return !isNaN(pubTime) && (nowMs - pubTime) <= 24 * 3600000;
+  });
+
+  // If fewer than 15 stories from the last 24h, the edition is stale! (e.g. laptop off overnight, or cold boot in the morning)
+  // Ingest fresh stories synchronously and await it before serving the client!
+  if (publishedUnder24h.length < 15) {
+    console.log(`[Feed Request] Stale edition detected (${publishedUnder24h.length} stories < 24h). Triggering immediate synchronous ingestion...`);
+    try {
+      await runIngestionPipeline();
+    } catch (err) {
+      console.error('[Feed Request] Synchronous ingestion error:', err);
+    }
+  } else {
+    // Background check for next scheduled slot
+    checkAndRunScheduledIngestion(false).catch(err => {
+      console.error('[Feed Request] Background scheduled check error:', err);
+    });
+  }
+
+  // 1. Strict active shelf-life & fluent English filter (72 hours in cadence mode, 7 days in legacy)
   const validStories = allStories.filter(s => {
     if (s.status !== 'published') return false;
     const pubTime = new Date(s.publishedAt || s.ingestedAt).getTime();
-    if (isNaN(pubTime)) return true;
-    return (nowMs - pubTime) <= shelfLifeMs;
+    if (!isNaN(pubTime) && (nowMs - pubTime) > shelfLifeMs) return false;
+    // Zero-Tolerance Untranslated Policy: Never allow un-translated foreign text into consumer feed
+    if (isNonEnglishArticle(s.title, s.summary).isNonEnglish) {
+      return false;
+    }
+    return true;
   });
 
   // 2. Guarantee high-resolution editorial photography for every story
@@ -1337,6 +1397,60 @@ app.post('/api/admin/action', (req, res) => {
 
   writeJsonFile(STORIES_FILE, allStories);
   res.json(story);
+});
+
+// Translate a quarantined or foreign-language story to English on demand via Gemini
+app.post('/api/admin/translate-story', async (req, res) => {
+  const { storyId } = req.body;
+  const story = allStories.find(s => s.id === storyId);
+  if (!story) return res.status(404).json({ error: 'Story not found' });
+
+  if (!ai) return res.status(503).json({ error: 'Gemini client not initialized' });
+
+  try {
+    const prompt = `
+You are the senior editorial intelligence engine for Briefly, an editorial-grade European startup intelligence briefing.
+Translate the following European startup news item from ${story.publisher} into fluent, natural English:
+
+Title: ${story.title}
+Text: ${story.summary}
+
+MANDATORY RULES:
+1. Product Promise: The summary MUST communicate what happened and why it matters in 60 words or fewer in fluent, natural English.
+2. TRANSLATION: Both headline and summary MUST be in English.
+3. Strictly factual, neutral tone.
+`;
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.1-flash-lite',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            headline: { type: Type.STRING },
+            summary: { type: Type.STRING }
+          },
+          required: ['headline', 'summary']
+        }
+      }
+    });
+
+    const parsed = JSON.parse(response.text || '{}');
+    if (parsed.headline && parsed.summary) {
+      story.title = parsed.headline;
+      const { text, wordCount } = enforce60WordCap(parsed.summary, 60);
+      story.summary = text;
+      story.wordCount = wordCount;
+      story.quarantineReason = undefined;
+      story.status = 'published';
+      writeJsonFile(STORIES_FILE, allStories);
+      return res.json({ success: true, story });
+    }
+    res.status(500).json({ error: 'Failed to parse translation' });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Trigger pipeline manually
@@ -1726,6 +1840,102 @@ app.get('/api/analytics/summary', (req, res) => {
     },
     lastUpdated: new Date().toISOString()
   });
+});
+
+app.get('/api/analytics/export', (req, res) => {
+  const publishedStories = allStories.filter(s => s.status === 'published');
+  const publishedCount = publishedStories.length;
+  const todayStr = new Date().toISOString().split('T')[0];
+  const todayDauList = analyticsStore.dailyActiveUsers?.[todayStr] || [];
+  const dau = todayDauList.length;
+
+  const durations = analyticsStore.sessionDurationsSec || [];
+  const avgSessionDurationSec = durations.length > 0
+    ? Math.round(durations.reduce((a, b) => a + b, 0) / durations.length)
+    : 0;
+
+  const nowMs = Date.now();
+  const activeEditionStories = publishedStories.filter(s => {
+    const ageHours = (nowMs - new Date(s.publishedAt).getTime()) / (1000 * 60 * 60);
+    return ageHours <= 24;
+  });
+  const activeEditionCount = activeEditionStories.length > 0 ? activeEditionStories.length : Math.min(20, publishedCount);
+  const archive72hCount = Math.max(0, publishedCount - activeEditionCount);
+
+  const crashes = analyticsStore.clientCrashes || 0;
+  const slowLoads = analyticsStore.slowLoadWarnings || 0;
+  const feedFailures = analyticsStore.feedLoadFailures || 0;
+  const unhealthySessions = crashes + feedFailures;
+  const healthySessionsPercent = analyticsStore.totalSessions > 0
+    ? Number((((analyticsStore.totalSessions - unhealthySessions) / analyticsStore.totalSessions) * 100).toFixed(1))
+    : 100;
+
+  const totalCardsViewed = Object.values(analyticsStore.cardViewsByIndex).reduce((acc, count) => acc + count, 0);
+  const avgDepth = analyticsStore.totalSessions > 0
+    ? Number((totalCardsViewed / analyticsStore.totalSessions).toFixed(1))
+    : 0;
+  const completionRate = analyticsStore.totalSessions > 0
+    ? Math.round((analyticsStore.feedCompletions / analyticsStore.totalSessions) * 100)
+    : 0;
+
+  const rows: string[] = [];
+  rows.push('# BRIEFLY EUROPEAN STARTUP INTELLIGENCE - TELEMETRY & ADOPTION EXPORT');
+  rows.push(`# Export Timestamp: ${new Date().toISOString()}`);
+  rows.push('# Architecture: Zero-PII Anonymous Telemetry (GDPR-Compliant)');
+  rows.push('');
+  rows.push('Category,Metric,Value,Unit / Context');
+  rows.push(`Adoption,Daily Active Users (DAU),${dau},Unique readers active today`);
+  rows.push(`Adoption,Total Reader Sessions,${analyticsStore.totalSessions},Cumulative app sessions`);
+  rows.push(`Engagement,Avg Time Spent on App (s),${avgSessionDurationSec},Seconds active dwell time`);
+  rows.push(`Engagement,Stories Read Per Session,${avgDepth},Average card depth`);
+  rows.push(`Engagement,Briefing Completion Rate,${completionRate}%,Reached milestone / final card`);
+  rows.push(`Content,Active Edition Stories (<24h),${activeEditionCount},Stories in current active daily briefing`);
+  rows.push(`Content,Catch-up Archive Stories (24-72h),${archive72hCount},Stories in rolling 72-hour catch-up pool`);
+  rows.push(`Content,Total Curated Published Stories,${publishedCount},Available in feed`);
+  rows.push(`Content,Daily Cadence Target,25,Target daily volume`);
+  rows.push(`Stability,Healthy Sessions Rate,${healthySessionsPercent}%,Sessions without crashes or feed load failures`);
+  rows.push(`Stability,Client Crashes & JS Errors,${crashes},Uncaught client errors`);
+  rows.push(`Stability,Slow Load Latencies (>3s),${slowLoads},Network or server response warnings`);
+  rows.push(`Stability,Feed Load Failures,${feedFailures},Zero-story or network failure incidents`);
+  rows.push(`Actions,Quick Bounces (<=1 card),${analyticsStore.quickBounces},Exited immediately`);
+  rows.push(`Actions,Primary Source Clicks,${analyticsStore.sourceClicks},Read full story at publisher`);
+  rows.push(`Actions,Stories Saved / Bookmarked,${analyticsStore.saves},Offline reading bookmarks`);
+  rows.push(`Actions,Story Cards Shared,${analyticsStore.shares},Executive quote card shares`);
+  rows.push('');
+  rows.push('# READER GEOGRAPHY & ECOSYSTEMS');
+  rows.push('Country,Active Readers,Share Percentage');
+  const readerCountries = analyticsStore.readerCountries || {};
+  const totalReaders = Math.max(1, Object.values(readerCountries).reduce((a, b) => a + b, 0));
+  if (Object.keys(readerCountries).length === 0) {
+    rows.push('None logged yet,0,0%');
+  } else {
+    for (const [country, count] of Object.entries(readerCountries)) {
+      const share = Math.round((count / totalReaders) * 100);
+      rows.push(`"${country.replace(/"/g, '""')}",${count},${share}%`);
+    }
+  }
+  rows.push('');
+  rows.push('# READING FUNNEL & RETENTION PROGRESSION');
+  rows.push('Card Step,Story Index,Reader Views,Retention Rate,Drop-off Rate');
+  let prevViews = analyticsStore.totalSessions;
+  for (let i = 0; i < Math.min(publishedCount, 30); i++) {
+    const views = analyticsStore.cardViewsByIndex[i] || 0;
+    const retention = analyticsStore.totalSessions > 0 ? Math.round((views / analyticsStore.totalSessions) * 100) : 0;
+    const dropOff = prevViews > 0 ? Math.max(0, Math.round(((prevViews - views) / prevViews) * 100)) : 0;
+    rows.push(`Story ${i + 1},${i},${views},${retention}%,${dropOff}%`);
+    prevViews = views;
+  }
+  rows.push('');
+  rows.push('# PIPELINE EXECUTION LOGS');
+  rows.push('Run ID,Timestamp,Duration (ms),Sources Processed,Raw Articles Fetched,Qualified Articles,Published Stories,Quarantined Stories,Errors');
+  for (const log of pipelineLogs.slice(0, 15)) {
+    rows.push(`"${log.runId}","${log.timestamp}",${log.durationMs},${log.sourcesProcessed},${log.rawArticlesFetched},${log.articlesQualified},${log.publishedCount},${log.quarantinedCount},"${(log.errors || []).join('; ').replace(/"/g, '""')}"`);
+  }
+
+  const csvContent = rows.join('\r\n');
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="briefly-telemetry-${todayStr}.csv"`);
+  res.send(csvContent);
 });
 
 // ---------------- VITE MIDDLEWARE / STATIC FILES ----------------

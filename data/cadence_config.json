@@ -27,7 +27,7 @@
     }
   ],
   "activeShelfLifeHours": 72,
-  "ingestionScanWindowHours": 24,
+  "ingestionScanWindowHours": 72,
   "dbRetentionDays": 7,
   "enableMilestoneCard": true,
   "milestonePosition": 30

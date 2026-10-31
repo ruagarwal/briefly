@@ -31,6 +31,8 @@ interface DeviceSimulatorFrameProps {
   onOpenLaunchGuide: () => void;
   onRefresh: () => void;
   isRefreshing: boolean;
+  isEditor?: boolean;
+  onToggleEditor?: () => void;
 }
 
 type DeviceMode = 'iphone' | 'pixel' | 'fullscreen';
@@ -42,9 +44,22 @@ export const DeviceSimulatorFrame: React.FC<DeviceSimulatorFrameProps> = ({
   onOpenAdmin,
   onOpenLaunchGuide,
   onRefresh,
-  isRefreshing
+  isRefreshing,
+  isEditor = false,
+  onToggleEditor
 }) => {
   const [deviceMode, setDeviceMode] = useState<DeviceMode>('iphone');
+  const [logoClicks, setLogoClicks] = useState(0);
+
+  const handleLogoClick = () => {
+    const next = logoClicks + 1;
+    setLogoClicks(next);
+    if (next >= 5) {
+      triggerHaptic('sheetOpen');
+      onToggleEditor?.();
+      setLogoClicks(0);
+    }
+  };
 
   return (
     <div className="flex flex-col h-[100dvh] max-h-[100dvh] w-full bg-[#070a0f] text-slate-100 overflow-hidden font-sans">
@@ -56,7 +71,11 @@ export const DeviceSimulatorFrame: React.FC<DeviceSimulatorFrameProps> = ({
       <header className="hidden lg:flex items-center justify-between gap-8 px-6 py-3 border-b border-white/[0.08] bg-[#0c111a]/80 backdrop-blur-md shrink-0 z-40">
         {/* Zone 1: Single text element brand */}
         <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white text-sm shadow-md shadow-blue-600/30">
+          <div 
+            onClick={handleLogoClick}
+            className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white text-sm shadow-md shadow-blue-600/30 cursor-pointer select-none transition-transform active:scale-90"
+            title="Briefly"
+          >
             {tokens.brand.symbol}
           </div>
           <div className="flex items-baseline gap-2">
@@ -113,7 +132,7 @@ export const DeviceSimulatorFrame: React.FC<DeviceSimulatorFrameProps> = ({
           </button>
         </div>
 
-        {/* Zone 3: Actions (Refresh, Saved Stories, Editorial Desk, Store Guide) */}
+        {/* Zone 3: Actions (Refresh, Saved Stories, and conditional Editorial Desk) */}
         <div className="flex items-center gap-2">
           <button
             onClick={() => {
@@ -143,27 +162,34 @@ export const DeviceSimulatorFrame: React.FC<DeviceSimulatorFrameProps> = ({
             )}
           </button>
 
-          <button
-            onClick={() => {
-              triggerHaptic('sheetOpen');
-              onOpenAdmin();
-            }}
-            className="h-9 px-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 text-xs font-medium flex items-center gap-1.5 transition-all"
-          >
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Editorial Desk</span>
-          </button>
+          {/* Internal Operator Tools: Only rendered when editor authentication or parameter is present */}
+          {isEditor && (
+            <>
+              <button
+                onClick={() => {
+                  triggerHaptic('sheetOpen');
+                  onOpenAdmin();
+                }}
+                className="h-9 px-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-emerald-500/30 text-xs font-medium flex items-center gap-1.5 transition-all"
+                title="Open Editorial Desk & Pipeline Console"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Editorial Desk</span>
+              </button>
 
-          <button
-            onClick={() => {
-              triggerHaptic('sheetOpen');
-              onOpenLaunchGuide();
-            }}
-            className="h-9 px-3.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/40 text-xs font-medium flex items-center gap-1.5 transition-all"
-          >
-            <FileText className="w-3.5 h-3.5" />
-            <span>Native APK & iOS</span>
-          </button>
+              <button
+                onClick={() => {
+                  triggerHaptic('sheetOpen');
+                  onOpenLaunchGuide();
+                }}
+                className="h-9 px-3.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/40 text-xs font-medium flex items-center gap-1.5 transition-all"
+                title="Native Mobile Packaging Guide"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>Native APK & iOS</span>
+              </button>
+            </>
+          )}
         </div>
       </header>
 
