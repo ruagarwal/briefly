@@ -545,5 +545,36 @@ The backend implements `isNonEnglishArticle(title, description, sourceLanguages)
   - Reader country distribution and client crash/error logs.
   - Historical pipeline run durations and yield metrics.
 
+---
+
+## 23. Core Product Invariants, VC Summarization & Automated Verification
+
+### A. The Core Product Guarantee
+Briefly is tailored specifically for European venture capital partners, founders, and tech executives. The product promises:
+1. **Executive-Grade Summarization**: Deep article hydration (fetching canonical paragraphs rather than headline snippets) synthesized into a calibrated 3-sentence, 38–58 word micro-brief:
+   - **Sentence 1**: Hard news, lead figures (round size, valuation, revenue metrics, or regulatory mandates).
+   - **Sentence 2**: Underlying mechanics, technical architecture, or commercial partners.
+   - **Sentence 3**: Strategic ecosystem impact or market positioning.
+   - **Anti-Headline Echo Rule**: The summary never opens with or repeats the headline (Sentence 1 token overlap strictly $\le 35\%$).
+2. **Zero-Tolerance Translation Leakage**: 100% of non-English European reporting (German, French, Spanish, Nordic, Ukrainian, Greek, CEE, etc.) is reliably translated to natural, international English with zero foreign stopwords remaining.
+3. **14-Point Editorial Quality Gate**: Every card passes strict automated validation before publication. Summaries shorter than 38 words, longer than 58 words, containing echoed headlines, untranslated foreign stopwords, Cyrillic/Greek characters, link dumps, or paywall boilerplate are automatically blocked and quarantined.
+
+### B. Triple-Strategy Neural Translation Architecture
+To eliminate quota exhaustion (such as the 20 requests/day limit on `gemini-3.8-flash`) while ensuring 100% uptime:
+- **Primary Engine (`gemini-3.1-flash-lite`)**: Fast, accurate generative synthesis with safe 4.2-second request pacing (14.2 RPM, staying strictly under the 15 RPM / 1,500 daily requests free-tier limit).
+- **Secondary Engine (DuckDuckGo Neural Translation)**: High-resilience direct translation with automated VQD token refresh and invalidation on network non-OK responses.
+- **Tertiary Engine (Google Translate API Alternative)**: Client failover endpoint for zero-interruption translation continuity.
+- **Client Feed Shield**: The consumer endpoint (`GET /api/feed/today`) dynamically filters out any story where `isNonEnglishArticle` or `!passesEditorialQualityGate`, guaranteeing end readers never see an untranslated card.
+
+### C. Automated Build & Regression Enforcement
+Automated tests are integrated into the root build command (`npm run build` runs `npm test` before `vite build`). The test suite validates:
+1. **Scoring & Ranking Engine (`tests/ranking_engine.test.ts`)**: 14 tests verifying exponential freshness decay, logarithmic funding diminishing returns, 24-hour eligibility windows, and diversity-aware geographic selection.
+2. **Core Pipeline Verification (`tests/core_pipeline_verification.test.ts`)**: 16 tests verifying:
+   - VC executive micro-brief synthesis (38–58 words, anti-echo, terminal punctuation, concrete figures).
+   - Multi-lingual language detection and translation across European language families with zero foreign stopword leakage.
+   - 14-point editorial quality gate rejection of fragments, echoes, foreign vocabulary, link dumps, and boilerplate.
+   - Algorithmic fallback resilience for offline or rate-limited environments.
+Any code change or build that introduces translation leakage or breaks summarization quality immediately fails the build process.
+
 
 

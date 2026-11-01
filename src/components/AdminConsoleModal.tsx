@@ -69,6 +69,7 @@ export const AdminConsoleModal: React.FC<AdminConsoleModalProps> = ({ onClose, o
   const [cadenceInfo, setCadenceInfo] = useState<any>(null);
   const [restoringConfig, setRestoringConfig] = useState(false);
   const [translatingStoryId, setTranslatingStoryId] = useState<string | null>(null);
+  const [isTranslatingAll, setIsTranslatingAll] = useState(false);
 
   // Fetch data
   const fetchData = async () => {
@@ -227,6 +228,24 @@ export const AdminConsoleModal: React.FC<AdminConsoleModalProps> = ({ onClose, o
       alert('Translation network error: ' + e.message);
     } finally {
       setTranslatingStoryId(null);
+    }
+  };
+
+  const handleTranslateAll = async () => {
+    try {
+      setIsTranslatingAll(true);
+      const res = await fetch('/api/admin/auto-translate-all', { method: 'POST' });
+      if (res.ok) {
+        const data = await res.json();
+        setActionSuccess(`Translated & published ${data.translatedCount} foreign stories.`);
+        fetchData();
+        onFeedUpdated();
+        setTimeout(() => setActionSuccess(null), 4000);
+      }
+    } catch (err) {
+      console.error('Auto-translate all failed', err);
+    } finally {
+      setIsTranslatingAll(false);
     }
   };
 
@@ -694,11 +713,26 @@ export const AdminConsoleModal: React.FC<AdminConsoleModalProps> = ({ onClose, o
           {/* QUARANTINE QUEUE */}
           {activeTab === 'quarantine' && (
             <div className="space-y-4">
-              <div className="p-3 bg-amber-950/30 border border-amber-800/40 rounded-2xl flex items-start gap-3 text-xs text-amber-200">
-                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                <p className="leading-relaxed">
-                  Stories with Gemini confidence &lt;75% or uncorroborated high-impact financial claims are quarantined. Review, refine summary to $\le 60$ words, and approve or reject before publication.
-                </p>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 bg-amber-950/30 border border-amber-800/40 rounded-2xl">
+                <div className="flex items-start gap-2.5 text-xs text-amber-200">
+                  <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-semibold block text-amber-100">Editorial Quarantine Desk ({quarantinedStories.length} items)</span>
+                    <span className="text-[11px] text-amber-300/80">Foreign-language reporting or items requiring verification before publication.</span>
+                  </div>
+                </div>
+
+                {quarantinedStories.length > 0 && (
+                  <button
+                    onClick={handleTranslateAll}
+                    disabled={isTranslatingAll}
+                    className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center gap-1.5 transition-all disabled:opacity-50 shrink-0 shadow-sm"
+                    title="Translate all foreign stories to English and publish"
+                  >
+                    <Sparkles className={`w-3.5 h-3.5 ${isTranslatingAll ? 'animate-spin' : ''}`} />
+                    <span>{isTranslatingAll ? 'Translating All...' : `Auto-Translate All (${quarantinedStories.length})`}</span>
+                  </button>
+                )}
               </div>
 
               {quarantinedStories.length === 0 ? (

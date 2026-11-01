@@ -7,7 +7,14 @@
   "sourceClicks": 0,
   "saves": 0,
   "shares": 0,
-  "sessionDurationsSec": [],
+  "sessionDurationsSec": [
+    25114,
+    630,
+    652,
+    772,
+    794,
+    1174
+  ],
   "dwellTimesMs": [],
   "readerCountries": {},
   "feedLoadFailures": 0,
